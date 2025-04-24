@@ -41,6 +41,11 @@ function SidebarComponent({ handleLogout }) {
               Pending Approvals
             </Link>
           </li>
+          <li>
+            <Link to="/subscriptions">
+              Subscriptions
+            </Link>
+          </li>
         </ul>
       </nav>
 

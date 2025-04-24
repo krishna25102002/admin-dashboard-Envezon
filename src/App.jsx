@@ -10,6 +10,7 @@ import ViewBill from './components/ViewBill';
 import Events from './pages/Events';
 import Promotions from './pages/Promotions';
 import PendingApprovals from './pages/PendingApprovals';
+import Subscriptions from './pages/Subscriptions';
 import './App.css';
 
 function App() {
@@ -64,6 +65,7 @@ function App() {
             <Route path="/events" element={<Events isSidebarOpen={isSidebarOpen} />} />
             <Route path="/promotions" element={<Promotions isSidebarOpen={isSidebarOpen} />} />
             <Route path="/pending-approvals" element={<PendingApprovals isSidebarOpen={isSidebarOpen} />} />
+            <Route path="/subscriptions" element={<Subscriptions isSidebarOpen={isSidebarOpen} />} />
             <Route path="/profile" element={<div>Profile Page</div>} />
           </Routes>
         </div>
