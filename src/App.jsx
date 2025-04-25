@@ -11,11 +11,13 @@ import Events from './pages/Events';
 import Promotions from './pages/Promotions';
 import PendingApprovals from './pages/PendingApprovals';
 import Subscriptions from './pages/Subscriptions';
+import Profile from './pages/Profile';
 import './App.css';
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false); // New state for dropdown
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -26,6 +28,10 @@ function App() {
       setIsLoggedIn(false);
       window.location.href = '/login.html';
     }
+  };
+
+  const toggleProfileDropdown = () => {
+    setIsProfileDropdownOpen(!isProfileDropdownOpen);
   };
 
   return (
@@ -41,12 +47,12 @@ function App() {
             <h1 className="company-name">Evnazon</h1>
           </div>
           <div className="header-right">
-            <div className="profile-container">
+            <div className="profile-container" onClick={toggleProfileDropdown}>
               <div className="profile-icon"></div>
               <span className="admin-name">Admin</span>
-              <div className="profile-dropdown">
-                <Link to="/profile" className="dropdown-item">Profile</Link>
-                <Link to="#" className="dropdown-item" onClick={handleLogout}>Logout</Link>
+              <div className={`profile-dropdown ${isProfileDropdownOpen ? 'open' : ''}`}>
+                <Link to="/profile" className="dropdown-item" onClick={() => setIsProfileDropdownOpen(false)}>Profile</Link>
+                <Link to="#" className="dropdown-item" onClick={() => { handleLogout(); setIsProfileDropdownOpen(false); }}>Logout</Link>
               </div>
             </div>
           </div>
@@ -66,7 +72,7 @@ function App() {
             <Route path="/promotions" element={<Promotions isSidebarOpen={isSidebarOpen} />} />
             <Route path="/pending-approvals" element={<PendingApprovals isSidebarOpen={isSidebarOpen} />} />
             <Route path="/subscriptions" element={<Subscriptions isSidebarOpen={isSidebarOpen} />} />
-            <Route path="/profile" element={<div>Profile Page</div>} />
+            <Route path="/profile" element={<Profile isSidebarOpen={isSidebarOpen} />} />
           </Routes>
         </div>
       </div>

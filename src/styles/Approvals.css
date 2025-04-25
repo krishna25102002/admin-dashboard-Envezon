@@ -107,7 +107,7 @@
   }
   
   .approvals-table th {
-    background-color: #f4a261;
+    background-color: #FF8438;
     color: white;
     font-weight: bold;
     padding: 12px;
@@ -149,8 +149,8 @@
     display: flex;
     align-items: center;
     padding: 6px 12px;
-    background-color: #f4a261;
-    border: 1px solid #f4a261;
+    background-color: #FF8438;
+    border: 1px solid #FF8438;
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
@@ -159,7 +159,7 @@
   }
   
   .dropdown-header:hover {
-    background-color: #e76f51;
+    background-color: #FF8438;
   }
   
   .dropdown-arrow {

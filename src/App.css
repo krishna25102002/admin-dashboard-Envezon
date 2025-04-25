@@ -14,7 +14,7 @@ html, body, #root {
 
 /* Header Styles */
 .app-header {
-  background-color: #e18350;
+  background-color: #FC9256; /* Primary Orange */
   padding: 16px;
   display: flex;
   justify-content: space-between;
@@ -48,12 +48,13 @@ html, body, #root {
   display: flex;
   align-items: center;
   gap: 8px;
+  cursor: pointer; /* Indicate clickable area */
 }
 
 .profile-icon {
   width: 32px;
   height: 32px;
-  background-color: #5A4032;
+  background-color: #FC9256; /* Primary Orange */
   border-radius: 50%;
   background-image: url('https://source.unsplash.com/32x32/?user');
   background-size: cover;
@@ -72,15 +73,15 @@ html, body, #root {
   position: absolute;
   top: 40px;
   right: 0;
-  background-color: #e18350;
+  background-color: #FC9256; /* Primary Orange */
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   min-width: 120px;
   z-index: 1002;
 }
 
-.profile-container:hover .profile-dropdown {
-  display: block;
+.profile-dropdown.open {
+  display: block; /* Show dropdown when class 'open' is applied */
 }
 
 .dropdown-item {
@@ -92,7 +93,7 @@ html, body, #root {
 }
 
 .dropdown-item:hover {
-  background-color: #6B4E3A;
+  background-color: #FF8438; /* Secondary Orange on hover */
 }
 
 /* Toggle Button Styles */
@@ -106,14 +107,14 @@ html, body, #root {
   flex-direction: column;
   justify-content: space-between;
   padding: 8px;
-  background-color: #5A4032;
+  background-color: #FC9256; /* Primary Orange */
   border-radius: 4px;
   transition: background-color 0.3s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .toggle-button:hover {
-  background-color: #6B4E3A;
+  background-color: #FF8438; /* Secondary Orange on hover */
 }
 
 .hamburger-line {
@@ -145,7 +146,7 @@ html, body, #root {
 /* Sidebar Styles */
 .sidebar {
   width: 100%;
-  background-color: #e18350;
+  background-color: #FC9256; /* Primary Orange */
   color: white;
   height: 100%;
   padding: 24px;
@@ -153,7 +154,8 @@ html, body, #root {
   flex-direction: column;
   justify-content: space-between;
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
-  border-right: 1px solid #e18350;
+  border-right: 1px solid #FC9256; /* Primary Orange */
+  overflow-y: auto; /* Allow scrolling */
 }
 
 .sidebar ul {
@@ -174,17 +176,17 @@ html, body, #root {
 }
 
 .sidebar a:hover {
-  background-color: #5A4032;
+  background-color: #FF8438; /* Secondary Orange on hover */
 }
 
 .sidebar .active {
-  background-color: #5A4032;
+  background-color: #FF8438; /* Secondary Orange for active state */
 }
 
 /* Sidebar Separator */
 .sidebar-separator {
   border: 0;
-  border-top: 1px solid #5A4032;
+  border-top: 1px solid #FF8438; /* Secondary Orange */
   margin: 16px 0;
 }
 
