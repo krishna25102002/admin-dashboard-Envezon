@@ -43,7 +43,7 @@ function SidebarComponent({ handleLogout }) {
           </li>
           <li>
             <Link to="/subscriptions">
-              Subscriptions
+              Subscriptions &  Payments
             </Link>
           </li>
         </ul>
