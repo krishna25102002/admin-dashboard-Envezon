@@ -1,0 +1,105 @@
+.promotions-page {
+    padding: 20px;
+    /* Adjust based on your main-content padding if needed */
+}
+
+.promotions-page h1 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.promotions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.promotion-card,
+.add-promotion-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.promotion-card:hover,
+.add-promotion-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.promotion-card h3 {
+    margin-top: 0;
+    color: #FC9256; /* Envezon Orange */
+    font-size: 1.3em;
+}
+
+.promotion-card p {
+    margin: 8px 0;
+    color: #555;
+    font-size: 0.95em;
+    flex-grow: 1;
+}
+
+.promotion-card .status {
+    font-weight: bold;
+}
+
+.promotion-card .status.approved {
+    color: #28a745; /* Green */
+}
+
+.promotion-card .status.pending {
+    color: #ffc107; /* Yellow */
+}
+
+.add-promotion-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    cursor: pointer;
+    border: 2px dashed #FC9256; /* Envezon Orange */
+    color: #FC9256;
+    min-height: 150px; /* Ensure it has some height */
+}
+
+.add-promotion-card .plus-icon {
+    font-size: 3em;
+    margin-bottom: 10px;
+}
+
+/* Modal Styles (Basic) */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 500px;
+}
+
+.modal-content h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Add more styles for form elements (input, button) as needed */

@@ -5,7 +5,8 @@
     height: 100%;
     padding: 20px;
     background-color: #fff;
-    overflow-y: auto; /* Allow scrolling if content overflows */
+    overflow-y: auto;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.05); /* Softer shadow for elegance */
     box-sizing: border-box;
   }
   
@@ -18,51 +19,42 @@
     padding: 0;
     margin: 0;
   }
-  
-  .sidebar nav ul li {
+
+  .sidebar ul li { /* General styling for all list items */
     margin-bottom: 10px;
   }
   
-  .sidebar nav ul li a {
+  /* Unified link styles for main navigation and bottom section links */
+  .sidebar ul li a {
     display: block;
-    padding: 10px 15px;
-    font-size: 16px;
-    color: #333;
+    padding: 12px 18px; /* Increased padding for a more spacious feel */
+    font-size: 18px; /* Updated font size as requested */
+    color: #333745; /* Refined dark color for text */
     text-decoration: none;
-    border-radius: 4px;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    border-radius: 6px; /* Slightly more rounded corners */
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out; /* Smoother transition */
+    font-weight: 500; /* Medium font weight for clarity */
   }
   
-  .sidebar nav ul li a:hover {
-    background-color: #FF8438; /* Secondary Orange on hover */
-    color: white;
+  .sidebar ul li a:hover {
+    background-color: #FFF0E6; /* Light orange background on hover */
+    color: #D95F1A; /* Darker orange text on hover */
   }
   
+  /* Active state primarily for main navigation items */
   .sidebar nav ul li a.active {
     background-color: #FC9256; /* Primary Orange for active state */
     color: white;
+    font-weight: 600; /* Bolder for active state */
   }
   
   .sidebar-separator {
     border: 0;
-    border-top: 1px solid #ccc;
+    border-top: 1px solid #EAEEF3; /* Lighter, more subtle separator color */
     margin: 20px 0;
   }
   
   /* Bottom Section Styles */
-  .sidebar > div ul li {
-    margin-bottom: 10px;
-  }
-  
-  .sidebar > div ul li a {
-    display: block;
-    padding: 10px 15px;
-    font-size: 16px;
-    text-decoration: none;
-    border-radius: 4px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
-  
   /* Specific styling for Logout */
   .sidebar > div ul li:nth-child(1) a {
     background-color: #FC9256; /* Primary Orange for Logout */
@@ -71,17 +63,12 @@
   
   .sidebar > div ul li:nth-child(1) a:hover {
     background-color: #FF8438; /* Secondary Orange on hover */
+    color: white; /* Ensure text remains white */
   }
   
-  /* Specific styling for Settings */
-  .sidebar > div ul li:nth-child(2) a {
-    background-color: #A0522D; /* Dark brown for Settings */
-    color: white;
-  }
-  
-  .sidebar > div ul li:nth-child(2) a:hover {
-    background-color: #FF8438; /* Secondary Orange on hover */
-  }
+  /* Settings link (.sidebar > div ul li:nth-child(2) a) will now inherit 
+     the general .sidebar ul li a styles for a more consistent and elegant look.
+     Its previous specific background and hover styles are removed. */
   
   /* Ensure the bottom section stays within the sidebar */
   .sidebar > div {
@@ -92,12 +79,13 @@
   @media (max-width: 768px) {
     .sidebar {
       padding: 15px;
+      width: 150%; /* This width value is unusual and might need review for its intended behavior. */
     }
   
-    .sidebar nav ul li a,
-    .sidebar > div ul li a {
-      font-size: 14px;
-      padding: 8px 12px;
+    /* Apply responsive styles to all sidebar links */
+    .sidebar ul li a {
+      font-size: 16px; /* Adjusted for tablet */
+      padding: 10px 14px; /* Adjusted padding */
     }
   }
   
@@ -106,9 +94,9 @@
       padding: 10px;
     }
   
-    .sidebar nav ul li a,
-    .sidebar > div ul li a {
-      font-size: 12px;
-      padding: 6px 10px;
+    /* Apply responsive styles to all sidebar links */
+    .sidebar ul li a {
+      font-size: 14px; /* Adjusted for mobile */
+      padding: 8px 10px; /* Adjusted padding */
     }
   }
