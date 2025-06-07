@@ -242,9 +242,15 @@ html, body, #root {
   }
 
   .profile-icon {
-    width: 28px;
-    height: 28px;
-  }
+  width: 30px; /* Adjust size as needed */
+  height: 30px; /* Adjust size as needed */
+  background-size: cover; /* Or contain, depending on the icon */
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 50%; /* Optional: if you want a circular icon */
+  cursor: pointer;
+  /* Add margin or padding if needed for spacing */
+}
 
   .admin-name {
     font-size: 14px;

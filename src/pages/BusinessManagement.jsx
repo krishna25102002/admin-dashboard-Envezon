@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import '../styles/BusinessManagement.css';
 // Assuming your API service functions are in a file like 'apiService.js'
 // You might need to adjust the path based on your project structure.
-import { getAllBusinessPartners, getBusinessPartnerCount } from '../services/apiService'; // Adjust path as needed
+import { getAllBusinessPartners } from '../services/apiService'; // getBusinessPartnerCount might not be needed if we count client-side
 import { Link, useNavigate } from 'react-router-dom'; // Import Link and useNavigate
 
 
@@ -12,9 +12,7 @@ function BusinessManagement({ isSidebarOpen }) {
   const [isLoadingList, setIsLoadingList] = useState(true);
   const [errorList, setErrorList] = useState(null);
 
-  const [approvedVendorCount, setApprovedVendorCount] = useState(0);
-  const [isLoadingCount, setIsLoadingCount] = useState(true);
-  const [errorCount, setErrorCount] = useState(null);
+  // We will derive approvedVendorCount from the allBusinesses list
   const navigate = useNavigate(); // Initialize useNavigate
 
   // State for the service type dropdown in the header
@@ -43,7 +41,9 @@ function BusinessManagement({ isSidebarOpen }) {
         setErrorList(null);
         const data = await getAllBusinessPartners();
         console.log("Fetched All Businesses (Raw from API in BusinessManagement):", JSON.stringify(data, null, 2));
-        setAllBusinesses(data || []); // Ensure data is an array
+        // Filter for approved businesses immediately
+        const approvedBusinesses = (data || []).filter(business => business.isApproved === true);
+        setAllBusinesses(approvedBusinesses);
         setFilteredBusinesses(data || []); // Initially show all
       } catch (err) {
         setErrorList(err);
@@ -55,35 +55,21 @@ function BusinessManagement({ isSidebarOpen }) {
     loadVendors();
   }, []);
 
-  // Effect to fetch the count of approved business partners
-  useEffect(() => {
-    const loadApprovedCount = async () => {
-      try {
-        setIsLoadingCount(true);
-        setErrorCount(null);
-        const countData = await getBusinessPartnerCount();
-        // The API might return { count: X } or just X. Adjust as per your getBusinessPartnerCount implementation.
-        setApprovedVendorCount(countData !== undefined && countData.count !== undefined ? countData.count : (typeof countData === 'number' ? countData : 0));
-      } catch (err) {
-        setErrorCount(err);
-        console.error("Failed to fetch approved business partner count:", err);
-      } finally {
-        setIsLoadingCount(false);
-      }
-    };
-    loadApprovedCount();
-  }, []);
-
   // Effect to filter businesses when selectedService or allBusinesses changes
   useEffect(() => {
+    // Filter only from the already approved businesses stored in allBusinesses state
+    const businessesToFilter = allBusinesses.filter(business => business.isApproved === true);
+
     if (selectedService === 'All Services') {
-      setFilteredBusinesses(allBusinesses);
+      setFilteredBusinesses(businessesToFilter);
     } else {
       setFilteredBusinesses(
-        allBusinesses.filter(business => business.serviceProvided === selectedService)
+        businessesToFilter.filter(business => business.serviceProvided === selectedService)
       );
     }
   }, [selectedService, allBusinesses]);
+
+  const approvedVendorCount = allBusinesses.length; // Since allBusinesses now only stores approved ones
 
 
   return (
@@ -100,9 +86,7 @@ function BusinessManagement({ isSidebarOpen }) {
             <span className="search-icon">🔍</span>
           </div>
           <div className="total-vendors">
-            {isLoadingCount && <span>Loading count...</span>}
-            {!isLoadingCount && errorCount && <span>Error loading count</span>}
-            {!isLoadingCount && !errorCount && <span>Total Approved Vendors: {approvedVendorCount}</span>}
+            <span>Total Approved Vendors: {isLoadingList ? '...' : approvedVendorCount}</span>
           </div>
         </div>
       </div>

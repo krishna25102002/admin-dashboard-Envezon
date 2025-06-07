@@ -22,25 +22,22 @@ function SidebarComponent({ handleLogout }) {
             </Link>
           </li>
           <li>
+            <Link to="/pending-approvals">
+              Pending Approvals
+            </Link>
+          </li>
+          <li>
             <Link to="/content">
               Content (Approved)
             </Link>
           </li>
-          <li>
-            <Link to="/payments">
-              Payments
-            </Link>
-          </li>
+          
           <li>
             <Link to="/promotions">
               Promotions
             </Link>
           </li>
-          <li>
-            <Link to="/pending-approvals">
-              Pending Approvals
-            </Link>
-          </li>
+          
           <li>
             <Link to="/subscriptions">
               Subscriptions &  Payments

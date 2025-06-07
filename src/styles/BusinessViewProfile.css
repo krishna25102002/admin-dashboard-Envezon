@@ -4,9 +4,9 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 20px; /* Reduced padding for a tighter layout */
+  /* padding: 20px; Reduced padding for a tighter layout */
   margin: 0 auto; /* Center the container */
-  background-color: #f9fbfd; /* Light background */
+  /* background-color: #f9fbfd; Light background */
   border-radius: 12px;
   transition: margin-left 0.3s ease-in-out;
 }

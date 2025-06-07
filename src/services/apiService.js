@@ -61,6 +61,13 @@ export const updateBusinessDetailsAPI = async (id, data) => {
   return await apiFetch(`/business-partner/${id}`, { method: 'PUT', body: data });
 };
 
+
+// Function to get all users
+export const getAllUsers = async () => {
+  console.log("Fetching all users from /user/all");
+  return await apiFetch('/user/all'); // GET request
+};
+
 // Function for Dashboard: Get User Count
 export const getUserCount = async () => {
   const responseData = await apiFetch('/user/count');
@@ -114,5 +121,16 @@ export const getAuthToken = () => {
   // In a real application, you would retrieve the token from localStorage or sessionStorage
   return localStorage.getItem('authToken');
   // return "simulated_auth_token_12345"; // Example token if not using localStorage yet
+};
+// Function to get all promotions
+export const getAllPromotions = async () => {
+  console.log("Fetching all promotions from /promotions/all");
+  return await apiFetch('/promotions/all'); // GET request
+};
+
+// Function to add a new promotion
+export const addPromotion = async (promotionData) => {
+  console.log("Adding new promotion to /promotions/add");
+  return await apiFetch('/promotions/add', { method: 'POST', body: promotionData });
 };
 

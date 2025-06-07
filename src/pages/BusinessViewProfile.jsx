@@ -43,6 +43,7 @@ function BusinessViewProfile({ isSidebarOpen }) {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     if (businessId) {
@@ -52,7 +53,11 @@ function BusinessViewProfile({ isSidebarOpen }) {
         try {
           // In a real app, you'd call your actual API service function here
           const details = await getBusinessDetailsById(businessId);
-          setFormData(details);
+          if (details) {
+            setFormData(details);
+          } else {
+            setError("Business details not found or API returned no data.");
+          }
           setInitialFormData(details); // Store for cancel functionality
         } catch (err) {
           setError(err.message || "Failed to fetch business details.");
@@ -81,16 +86,17 @@ function BusinessViewProfile({ isSidebarOpen }) {
     e.preventDefault();
     setIsSubmitting(true);
     setError(null);
+    setSuccessMessage('');
     try {
       // In a real app, call your update API service
       await updateBusinessDetailsAPI(businessId, formData);
-      alert("Business details updated successfully! (Simulated)");
+      setSuccessMessage("Business details updated successfully!");
       setInitialFormData(formData); // Update initial data to current after successful save
       setIsEditing(false);
     } catch (err) {
       setError(err.message || "Failed to update business details.");
       console.error("API Update Error:", err);
-      alert(`Error: ${err.message || "Failed to update business details."}`);
+      // alert(`Error: ${err.message || "Failed to update business details."}`); // Avoid using alert for errors
     } finally {
       setIsSubmitting(false);
     }
@@ -105,6 +111,27 @@ function BusinessViewProfile({ isSidebarOpen }) {
     }
     setIsEditing(!isEditing);
     setError(null); // Clear any previous errors when toggling edit mode
+    setSuccessMessage('');
+  };
+
+  const handleApprove = async () => {
+    setIsSubmitting(true);
+    setError(null);
+    setSuccessMessage('');
+    try {
+      const updatedData = { ...formData, isApproved: true };
+      await updateBusinessDetailsAPI(businessId, updatedData);
+      setFormData(updatedData); // Update local state to reflect approval
+      setInitialFormData(updatedData); // Update initial data as well
+      setSuccessMessage("Business approved successfully!");
+      // Optionally, navigate away or disable the approve button
+      // navigate('/pending-approvals'); // Or to business management
+    } catch (err) {
+      setError(err.message || "Failed to approve business.");
+      console.error("API Approve Error:", err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const editableFields = [
@@ -159,6 +186,9 @@ function BusinessViewProfile({ isSidebarOpen }) {
         </button>
       </div>
 
+      {successMessage && <p style={{ color: 'green', textAlign: 'center', marginTop: '10px' }}>{successMessage}</p>}
+      {/* Error message display is already handled below if error and !isEditing */}
+
       <form onSubmit={handleSubmit} className="profile-form">
         {/* Basic Information */}
         <fieldset className="form-section">
@@ -212,6 +242,18 @@ function BusinessViewProfile({ isSidebarOpen }) {
           {renderField('isApproved')}
         </fieldset>
 
+        {!formData.isApproved && !isEditing && (
+          <div className="form-actions" style={{ justifyContent: 'center', borderTop: 'none', paddingTop: '10px' }}>
+            <button
+              type="button"
+              onClick={handleApprove}
+              className="action-button submit-button" // You might want a different class for approve
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Approving...' : 'Approve Business'}
+            </button>
+          </div>
+        )}
         {isEditing && (
           <div className="form-actions">
             <button type="submit" className="action-button submit-button" disabled={isSubmitting || isLoading}>

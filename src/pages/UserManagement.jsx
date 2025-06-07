@@ -1,45 +1,38 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import '../styles/UserManagement.css';
+import { getAllUsers } from '../services/apiService'; // Import the API function
 
 function UserManagement({ isSidebarOpen }) {
-  // Static data for the table (can be replaced with API data)
-  const initialUsers = [
-    { name: 'Anand', phone: '7898764523', email: 'abc@gmail.com', location: 'Madurai', status: 'Approved' },
-    { name: 'Anand', phone: '7898764523', email: 'abc@gmail.com', location: 'Madurai', status: 'Approved' },
-    { name: 'Anand', phone: '7898764523', email: 'abc@gmail.com', location: 'Madurai', status: 'Suspend' },
-    { name: 'Anand', phone: '7898764523', email: 'abc@gmail.com', location: 'Madurai', status: 'Approved' },
-    { name: 'Anand', phone: '7898764523', email: 'abc@gmail.com', location: 'Madurai', status: 'Approved' },
-    { name: 'Anand', phone: '7898764523', email: 'abc@gmail.com', location: 'Madurai', status: 'Approved' },
-    { name: 'Anand', phone: '7898764523', email: 'abc@gmail.com', location: 'Madurai', status: 'Suspend' },
-    { name: 'Anand', phone: '7898764523', email: 'abc@gmail.com', location: 'Madurai', status: 'Approved' },
-    { name: 'Anand', phone: '7898764523', email: 'abc@gmail.com', location: 'Madurai', status: 'Approved' },
-    { name: 'Anand', phone: '7898764523', email: 'abc@gmail.com', location: 'Madurai', status: 'Suspend' },
-    { name: 'Anand', phone: '7898764523', email: 'abc@gmail.com', location: 'Madurai', status: 'Approved' },
-    { name: 'Anand', phone: '7898764523', email: 'abc@gmail.com', location: 'Madurai', status: 'Approved' },
-  ];
-
   // State to manage the users and dropdown visibility for each row
-  const [users, setUsers] = useState(initialUsers);
+  const [users, setUsers] = useState([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState({});
+  const [loading, setLoading] = useState(true);
 
-  // Options for the dropdown
-  const statusOptions = ['Approved', 'Suspend'];
+  useEffect(() => {
+    const fetchUsers = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await getAllUsers();
+        // Assuming the API returns an array of user objects.
+        // Each user object should have fields like: id, name, phone, email, location, status
+        // We will use id, name, and phone (or phoneNumber)
+        // Example: if API returns 'userName' instead of 'name', use user.userName
+        console.log("Fetched users:", data);
+        setUsers(data || []); // Ensure data is an array
+      } catch (err) {
+        console.error("Failed to fetch users:", err.message || err);
+        setError(err.message || "Failed to load users.");
+        setUsers([]); // Set to empty array on error
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Toggle dropdown visibility for a specific row
-  const toggleDropdown = (index) => {
-    setIsDropdownOpen((prev) => ({
-      ...prev,
-      [index]: !prev[index],
-    }));
-  };
+    fetchUsers();
+  }, []);
 
-  // Handle selection of a status option
-  const handleStatusSelect = (index, value) => {
-    const updatedUsers = [...users];
-    updatedUsers[index].status = value;
-    setUsers(updatedUsers);
-    toggleDropdown(index); // Close the dropdown after selection
-  };
+  const [error, setError] = useState(null);
 
   return (
     <div className={`user-management ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
@@ -50,57 +43,43 @@ function UserManagement({ isSidebarOpen }) {
           <h1>User Management</h1>
         </div>
         <div className="header-right">
-          <div className="search-bar">
+          {/* <div className="search-bar">
             <input type="text" placeholder="Search" />
             <span className="search-icon">🔍</span>
-          </div>
+          </div> */}
           <div className="total-users">
-            <span>Total Users: 4000</span>
+            <span>Total Users: {loading ? '...' : users.length}</span>
           </div>
         </div>
       </div>
+
+      {loading && <p className="loading-message">Loading users...</p>}
+      {error && <p className="error-message">Error: {error}</p>}
 
       {/* Table Section */}
       <div className="user-table-container">
         <table className="user-table">
           <thead>
             <tr>
+              <th>Business ID</th>
               <th>Name</th>
               <th>Phone Number</th>
-              <th>Email</th>
-              <th>Location</th>
-              <th>Status</th>
             </tr>
           </thead>
           <tbody>
-            {users.map((user, index) => (
-              <tr key={index}>
-                <td>{user.name}</td>
-                <td>{user.phone}</td>
-                <td>{user.email}</td>
-                <td>{user.location}</td>
-                <td>
-                  <div className="custom-dropdown">
-                    <div className="dropdown-header" onClick={() => toggleDropdown(index)}>
-                      {user.status} <span className="dropdown-arrow">▼</span>
-                    </div>
-                    {isDropdownOpen[index] && (
-                      <ul className="dropdown-options">
-                        {statusOptions.map((option) => (
-                          <li
-                            key={option}
-                            className="dropdown-option"
-                            onClick={() => handleStatusSelect(index, option)}
-                          >
-                            {option}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                </td>
+            {!loading && !error && users.map((user, index) => (
+              // It's better to use a unique ID from the user data if available, e.g., user.id
+              <tr key={user.id || index}> 
+                <td>{user.id || 'N/A'}</td>
+                <td>{user.name || 'N/A'}</td>
+                <td>{user.phone || user.phoneNumber || 'N/A'}</td> {/* Check API field name */}
               </tr>
             ))}
+            {!loading && !error && users.length === 0 && (
+              <tr>
+                <td colSpan="3" style={{ textAlign: 'center' }}>No users found.</td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

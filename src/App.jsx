@@ -16,6 +16,7 @@ import Subscriptions from './pages/Subscriptions';
 import Profile from './pages/Profile';
 import './App.css';
 import BusinessViewProfile from './pages/BusinessViewProfile'; // Import the new component
+import { FaUserCircle } from 'react-icons/fa'; // Import a profile icon
 
 
 // This component will render the main application layout when the user is logged in
@@ -39,11 +40,12 @@ const MainAppLayout = ({
         </div>
         <div className="header-right">
           <div className="profile-container" onClick={toggleProfileDropdown}>
-            <div className="profile-icon"></div>
+            <div className="profile-icon">
+              <FaUserCircle size={28} /> {/* Use the imported icon here */}
+            </div>
             <span className="admin-name">Admin</span>
             <div className={`profile-dropdown ${isProfileDropdownOpen ? 'open' : ''}`}>
               <Link to="/profile" className="dropdown-item" onClick={() => toggleProfileDropdown(false)}>Profile</Link>
-              <Link to="#" className="dropdown-item" onClick={() => { handleLogout(); toggleProfileDropdown(false); }}>Logout</Link>
             </div>
           </div>
         </div>

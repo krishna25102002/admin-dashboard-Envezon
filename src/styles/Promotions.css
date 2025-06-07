@@ -1,105 +1,228 @@
-.promotions-page {
-    padding: 20px;
-    /* Adjust based on your main-content padding if needed */
+/* c:\Users\kd1812\Desktop\admin-dashboard-Envezon\src\styles\Promotions.css */
+.promotions-page { /* Renamed from .promotions-management for consistency with component name */
+  padding: 20px;
+  transition: margin-left 0.3s ease-in-out; /* For sidebar */
 }
 
-.promotions-page h1 {
-    margin-bottom: 20px;
-    color: #333;
+.promotions-page.sidebar-open {
+  margin-left: 30px; /* Adjust based on your sidebar width */
 }
 
+.promotions-page.sidebar-closed {
+  margin-left: 60px; /* Adjust based on your collapsed sidebar width */
+}
+
+.promotions-header { /* Renamed for clarity */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px; /* Increased margin */
+  padding-bottom: 15px; /* Increased padding */
+  border-bottom: 1px solid #e0e0e0; /* Lighter border */
+}
+
+.promotions-header h1 {
+  margin: 0;
+  font-size: 2em; /* Larger title */
+  color: #2c3e50; /* Darker, more modern color */
+}
+
+.add-promo-button, .submit-promo-button {
+  padding: 10px 20px; /* Increased padding */
+  background-color: #3498db; /* A more vibrant blue */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.95em; /* Slightly larger font */
+  transition: background-color 0.2s ease; /* Smooth transition */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.add-promo-button:hover, .submit-promo-button:hover {
+  background-color: #2980b9; /* Darker blue on hover */
+}
+
+/* Styles for the grid of promotion cards */
 .promotions-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Responsive grid */
+  gap: 25px; /* Increased gap */
+  margin-top: 20px;
 }
 
-.promotion-card,
-.add-promotion-card {
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+/* Styles for individual promotion cards */
+.promotion-card, .add-promotion-card {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Pushes status to the bottom if card height varies */
 }
 
-.promotion-card:hover,
-.add-promotion-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+.promotion-card:hover, .add-promotion-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 }
 
 .promotion-card h3 {
-    margin-top: 0;
-    color: #FC9256; /* Envezon Orange */
-    font-size: 1.3em;
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #34495e; /* Darker heading color */
+  font-size: 1.2em;
 }
 
 .promotion-card p {
-    margin: 8px 0;
-    color: #555;
-    font-size: 0.95em;
-    flex-grow: 1;
+  margin-bottom: 8px;
+  color: #555;
+  font-size: 0.9em;
+  line-height: 1.5;
 }
 
 .promotion-card .status {
-    font-weight: bold;
+  align-self: flex-start; /* Align status to the left */
+  padding: 5px 10px;
+  border-radius: 15px; /* Pill shape */
+  font-size: 0.8em;
+  font-weight: 500;
+  margin-top: 10px; /* Space above status */
 }
 
 .promotion-card .status.approved {
-    color: #28a745; /* Green */
+  background-color: #e6ffed;
+  color: #00875a;
 }
 
 .promotion-card .status.pending {
-    color: #ffc107; /* Yellow */
+  background-color: #fffbe6;
+  color: #ffab00;
 }
 
+/* Styles for the "Add New Promotion" card */
 .add-promotion-card {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    cursor: pointer;
-    border: 2px dashed #FC9256; /* Envezon Orange */
-    color: #FC9256;
-    min-height: 150px; /* Ensure it has some height */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  border: 2px dashed #bdc3c7; /* Dashed border */
+  color: #7f8c8d; /* Muted text color */
+  min-height: 150px; /* Ensure it has some height */
 }
 
-.add-promotion-card .plus-icon {
-    font-size: 3em;
-    margin-bottom: 10px;
+.add-promotion-card:hover {
+  border-color: #3498db; /* Blue border on hover */
+  color: #3498db; /* Blue text/icon on hover */
 }
 
-/* Modal Styles (Basic) */
+.add-promo-icon { /* Class for the new icon */
+  margin-bottom: 10px;
+  color: #bdc3c7; /* Initial icon color */
+  transition: color 0.2s ease;
+}
+
+.add-promotion-card:hover .add-promo-icon {
+  color: #3498db; /* Icon color changes on card hover */
+}
+
+.add-promotion-card p {
+  margin: 0;
+  font-weight: 500;
+}
+
+
+/* Modal Styles */
 .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
 }
 
 .modal-content {
-    background-color: white;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    width: 90%;
-    max-width: 500px;
+  background-color: white;
+  padding: 30px; /* Increased padding */
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 500px; /* Max width for the modal */
 }
 
 .modal-content h2 {
-    margin-top: 0;
-    margin-bottom: 20px;
-    color: #333;
+  margin-top: 0;
+  margin-bottom: 25px; /* Increased margin */
+  color: #333;
+  text-align: center;
 }
 
-/* Add more styles for form elements (input, button) as needed */
+.modal-content form div {
+  margin-bottom: 20px; /* Increased margin */
+}
+
+.modal-content label {
+  display: block;
+  margin-bottom: 8px; /* Increased margin */
+  font-weight: 500;
+  color: #555;
+}
+
+.modal-content input[type="number"],
+.modal-content input[type="text"] {
+  width: 100%;
+  padding: 12px; /* Increased padding */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 1em; /* Larger font */
+}
+
+.modal-content button {
+  padding: 12px 20px; /* Increased padding */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em; /* Larger font */
+  margin-right: 10px;
+  transition: background-color 0.2s ease;
+}
+
+.modal-content button[type="submit"] {
+  background-color: #28a745; /* Green for submit */
+  color: white;
+}
+
+.modal-content button[type="submit"]:hover {
+  background-color: #218838; /* Darker green */
+}
+
+.modal-content button[type="button"] {
+  background-color: #6c757d; /* Gray for cancel */
+  color: white;
+}
+
+.modal-content button[type="button"]:hover {
+  background-color: #5a6268; /* Darker gray */
+}
+
+
+.loading-message, .error-message {
+  text-align: center;
+  padding: 20px;
+  font-size: 1.1em;
+}
+
+.error-message {
+  color: red;
+}
+

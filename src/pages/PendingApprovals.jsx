@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../styles/PendingApprovals.css';
 import { getAllBusinessPartners } from '../services/apiService'; // Import the API function
 
@@ -8,6 +8,7 @@ function PendingApprovals({ isSidebarOpen }) {
   const [allBusinesses, setAllBusinesses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const [isServiceDropdownOpen, setIsServiceDropdownOpen] = useState(false);
   const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
@@ -56,11 +57,11 @@ function PendingApprovals({ isSidebarOpen }) {
     // Filter businesses based on approval status and selected service
     let currentBusinesses = allBusinesses.filter(business => !business.isApproved); // Show only not approved
 
-    if (selectedService !== 'All' && selectedService !== 'Service') {
-      currentBusinesses = currentBusinesses.filter(business => business.service === selectedService);
+    if (selectedService !== 'All' && selectedService !== 'Service') { // Assuming 'Service' is the default unselected text
+      currentBusinesses = currentBusinesses.filter(business => business.serviceProvided === selectedService);
     }
 
-    // The selectedStatus is always 'Pending' for this page, so no explicit filter needed for it here
+    // The selectedStatus is 'Pending' by default, which aligns with !business.isApproved
     // if you were to allow other statuses like 'Rejected', you'd filter by selectedStatus here.
     return currentBusinesses;
   }, [allBusinesses, selectedService, selectedStatus]);
@@ -71,7 +72,7 @@ function PendingApprovals({ isSidebarOpen }) {
       <div className="pending-approvals-header">
         <div className="header-left">
           {/* Consider making this a Link to navigate back if needed */}
-          <span className="back-arrow" onClick={() => window.history.back()} style={{cursor: 'pointer'}}>←</span>
+          <span className="back-arrow" onClick={() => navigate(-1)} style={{cursor: 'pointer'}}>←</span>
           <h1>Pending Approvals</h1>
         </div>
         <div className="header-right">
@@ -94,6 +95,7 @@ function PendingApprovals({ isSidebarOpen }) {
         <table className="pending-approvals-table">
           <thead>
             <tr>
+              <th>Business ID</th>
               <th>Business Name</th>
               <th>
                 <div className="custom-dropdown">
@@ -143,31 +145,14 @@ function PendingApprovals({ isSidebarOpen }) {
           <tbody>
             {!loading && !error && filteredBusinesses.map((business, index) => (
               <tr key={index} className={index % 2 === 0 ? 'even-row' : 'odd-row'}>
-                <td>{business.businessName}</td>
-                <td>{business.service}</td>
-                <td>{business.phoneNumber}</td>
-                <td>{business.plan}</td>
+                <td>{business.id || 'N/A'}</td>
+                <td>{business.businessName || 'N/A'}</td>
+                <td>{business.serviceProvided || 'N/A'}</td>
+                <td>{business.phoneNumber || 'N/A'}</td>
+                <td>{business.plan || 'N/A'}</td> {/* Assuming 'plan' is a field */}
                 <td>Pending</td> {/* Since we filter for !isApproved, status is implicitly Pending */}
                 <td>
-                  <Link
-                    to="/view-details"
-                    state={{
-                      data: {
-                        ...business, // Pass the whole business object
-                        // Ensure all necessary fields are present in the business object from API
-                        // Or map them explicitly if names differ
-                        // proprietorName: business.proprietorName || business.businessName?.split(' ')[0],
-                        // email: business.email || `${business.businessName?.split(' ')[0].toLowerCase()}@example.com`,
-                        // state: business.state || 'N/A',
-                        // district: business.district || 'N/A',
-                        // location: business.location || 'N/A',
-                        // paymentStatus: business.paymentStatus || 'Pending',
-                        // paymentMode: business.paymentMode || 'N/A',
-                        status: 'Pending' // Explicitly set status for ViewDetails if needed
-                      },
-                    }}
-                    className="view-link"
-                  >
+                  <Link to={`/business-profile/${(business.id)}`} className="view-link">
                     View
                   </Link>
                 </td>
@@ -175,7 +160,7 @@ function PendingApprovals({ isSidebarOpen }) {
             ))}
             {!loading && !error && filteredBusinesses.length === 0 && (
               <tr>
-                <td colSpan="6" style={{ textAlign: 'center' }}>No pending approvals found.</td>
+                <td colSpan="7" style={{ textAlign: 'center' }}>No pending approvals found.</td>
               </tr>
             )}
           </tbody>
