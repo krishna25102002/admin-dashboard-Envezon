@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/Dashboard.css';
-import { getUserCount, getBusinessPartnerCount } from '../services/apiService'; // Import API functions
+import { getUserCount, getBusinessPartnerCount} from '../services/apiService'; // Import API functions
 
 function Dashboard({ isSidebarOpen }) {
   const [userCount, setUserCount] = useState(0);
@@ -9,31 +9,30 @@ function Dashboard({ isSidebarOpen }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        // Fetch User Count
-        const uCount = await getUserCount();
-        setUserCount(uCount);
+useEffect(() => {
+  const fetchData = async () => {
+    setLoading(true);
+    setError(null);
+    console.log("Dashboard: Starting data fetch...");
+    try {
+      const uCount = await getUserCount();
+      console.log("Dashboard: Fetched User Count API Response:", uCount);
+      setUserCount(uCount);
 
-        // Fetch Business Partner Count
-        const bCount = await getBusinessPartnerCount();
-        setBusinessCount(bCount);
+      const bCount = await getBusinessPartnerCount();
+      console.log("Dashboard: Fetched Business Partner Count API Response:", bCount);
+      setBusinessCount(bCount);
 
-      } catch (e) {
-        console.error("Failed to fetch dashboard data:", e);
-        setError(e.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []); // Empty dependency array means this effect runs once on mount.
-          // If your token could change and you wanted to refetch, you'd need a way
-          // to signal that change here (e.g., from an Auth Context).
+    } catch (err) {
+      console.error("Dashboard: Failed to fetch dashboard data:", err);
+      setError(err.message || "Failed to load dashboard data.");
+    } finally {
+      console.log("Dashboard: Fetch complete, setting loading to false.");
+      setLoading(false);
+    }
+  };
+  fetchData();
+}, []);
 
   return (
     <div className={`dashboard ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>

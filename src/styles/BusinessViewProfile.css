@@ -1,0 +1,257 @@
+/* Base container styling */
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px; /* Reduced padding for a tighter layout */
+  margin: 0 auto; /* Center the container */
+  background-color: #f9fbfd; /* Light background */
+  border-radius: 12px;
+  transition: margin-left 0.3s ease-in-out;
+}
+
+/* Sidebar adjustments */
+.profile-container.sidebar-open {
+  margin-left: 60px;
+}
+
+.profile-container.sidebar-closed {
+  margin-left: 80px;
+}
+
+/* Header styling */
+.profile-view-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 15px; /* Added horizontal padding for better alignment */
+  margin-bottom: 20px; /* Reduced margin for a tighter layout */
+  border-bottom: 2px solid #ff9500;
+  width: 100%;
+}
+
+.header-main-title {
+  font-size: 1.5em; /* Slightly reduced for better proportion */
+  color: #ff6200;
+  margin: 0;
+  text-align: center;
+  flex-grow: 1;
+}
+
+.header-action-button {
+  border: 1px solid transparent;
+  padding: 8px 12px; /* Adjusted padding for smaller, neater buttons */
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9em; /* Reduced font size for better proportion */
+  font-weight: 500;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.back-button-header {
+  color: #ff9500;
+}
+
+.back-button-header:hover {
+  background-color: #fff3e0;
+  color: #e67e22;
+}
+
+.edit-button-header {
+  color: #ff9500;
+  border: 1px solid #ff9500;
+}
+
+.edit-button-header:hover {
+  background-color: #ff9500;
+  color: #fff;
+}
+
+/* Form styling */
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 25px; /* Slightly reduced gap for a more compact form */
+  width: 100%;
+}
+
+.form-section {
+  background-color: #ffffff;
+  padding: 25px 30px; /* Added horizontal padding for better alignment */
+  border-radius: 12px;
+  border: 1px solid #dfe6ee;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-section:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.form-section legend {
+  font-weight: 600;
+  color: #ff6200;
+  padding: 0 10px;
+  font-size: 1.1em; /* Slightly reduced for better proportion */
+  margin-left: 0; /* Removed negative margin for better alignment */
+  margin-bottom: 20px; /* Reduced margin for tighter spacing */
+}
+
+.form-row-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 15px 20px; /* Slightly reduced gap for a more compact layout */
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group.textarea-full-width {
+  grid-column: 1 / -1;
+}
+
+.form-group label {
+  margin-bottom: 6px; /* Reduced margin for tighter spacing */
+  font-weight: 500;
+  color: #4a5c6f;
+  font-size: 0.85em; /* Slightly reduced for better proportion */
+  text-transform: uppercase;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="tel"],
+.form-group input[type="number"],
+.form-group textarea {
+  padding: 10px 12px; /* Slightly reduced padding for a neater look */
+  border: 1px solid #ffcc80;
+  border-radius: 8px;
+  font-size: 0.9em;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  background-color: #fdfdfe;
+  color: #333;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #ffab40;
+  opacity: 1;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: #ff9500;
+  background-color: #fff;
+  box-shadow: 0 0 0 0.2rem rgba(255, 149, 0, 0.15);
+  outline: none;
+}
+
+.checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  background-color: #fdfdfe;
+  padding: 10px 12px; /* Reduced padding to match inputs */
+  border: 1px solid #ffcc80;
+  border-radius: 8px;
+  min-height: calc(1.5em + 20px + 2px); /* Adjusted to match input height */
+}
+
+.form-group input[type="checkbox"].form-checkbox {
+  height: 16px; /* Slightly reduced for better proportion */
+  width: 16px;
+  margin-right: 10px;
+  accent-color: #ff9500;
+}
+
+.form-group textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.form-group span {
+  padding: 10px 12px; /* Reduced padding to match inputs */
+  background-color: #fff3e0;
+  border-radius: 8px;
+  font-size: 0.9em;
+  color: #4a5c6f;
+  min-height: calc(1.5em + 20px + 2px);
+  display: flex;
+  align-items: center;
+  border: 1px solid #ffcc80;
+}
+
+/* Form actions (submit button) */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px; /* Reduced margin for a tighter layout */
+  padding-top: 15px; /* Reduced padding for a tighter layout */
+  border-top: 2px solid #ff9500;
+  width: 100%;
+}
+
+.action-button {
+  padding: 10px 20px; /* Slightly reduced padding for a neater button */
+  border-radius: 8px;
+  font-size: 0.9em; /* Reduced for better proportion */
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  border: none;
+}
+
+.action-button:active {
+  transform: translateY(1px);
+}
+
+.submit-button {
+  background-color: #ff9500;
+  color: white;
+}
+
+.submit-button:hover {
+  background-color: #e67e22;
+}
+
+.error-back-button {
+  background-color: #ff9500;
+  color: white;
+  margin-top: 20px !important;
+}
+
+.error-back-button:hover {
+  background-color: #e67e22;
+}
+
+/* Error and Success Messages */
+.error-message.form-error,
+.success-message {
+  padding: 10px 12px; /* Reduced padding for consistency */
+  border-radius: 8px;
+  margin-bottom: 15px; /* Reduced margin for tighter spacing */
+  text-align: center;
+  font-size: 0.9em;
+}
+
+.error-message.form-error {
+  background-color: #fbe9e7;
+  color: #c62828;
+  border: 1px solid #ffccbc;
+}
+
+.success-message {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+}
+
+.empty-placeholder {
+  min-height: 1px;
+}

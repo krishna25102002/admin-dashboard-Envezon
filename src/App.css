@@ -47,13 +47,11 @@ html, body, #root {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 8px;
   cursor: pointer; /* Indicate clickable area */
 }
 
 .profile-icon {
-  width: 32px;
-  height: 32px;
+ 
   background-color: #FC9256; /* Primary Orange */
   border-radius: 50%;
   background-image: url('https://source.unsplash.com/32x32/?user');
@@ -145,6 +143,7 @@ html, body, #root {
 
 /* Sidebar Styles */
 .sidebar {
+  margin-top: 20px;
   width: 100%;
   background-color: #FC9256; /* Primary Orange */
   color: white;

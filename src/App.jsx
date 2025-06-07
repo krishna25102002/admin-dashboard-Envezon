@@ -15,6 +15,8 @@ import PendingApprovals from './pages/PendingApprovals';
 import Subscriptions from './pages/Subscriptions';
 import Profile from './pages/Profile';
 import './App.css';
+import BusinessViewProfile from './pages/BusinessViewProfile'; // Import the new component
+
 
 // This component will render the main application layout when the user is logged in
 const MainAppLayout = ({
@@ -62,6 +64,7 @@ const MainAppLayout = ({
           <Route path="/pending-approvals" element={<PendingApprovals isSidebarOpen={isSidebarOpen} />} />
           <Route path="/subscriptions" element={<Subscriptions isSidebarOpen={isSidebarOpen} />} />
           <Route path="/profile" element={<Profile isSidebarOpen={isSidebarOpen} />} />
+          <Route path="/business-profile/:businessId" element={<BusinessViewProfile isSidebarOpen={isSidebarOpen} />} /> {/* Add new route */}
           <Route path="*" element={<Navigate to="/" replace />} /> {/* Fallback for authenticated app */}
         </Routes>
       </div>

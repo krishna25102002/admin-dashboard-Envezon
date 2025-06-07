@@ -1,8 +1,9 @@
 /* Sidebar Styles */
 .sidebar {
+    margin-top: 100px;
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: 500%;
     padding: 20px;
     background-color: #fff;
     overflow-y: auto;

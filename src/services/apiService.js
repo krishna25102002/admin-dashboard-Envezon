@@ -1,111 +1,118 @@
-const API_BASE_URL = 'http://codizone.in'
+// c:\Users\kd1812\Desktop\admin-dashboard-Envezon\src\services\apiService.js
 
-// Key for storing the token in localStorage
-const AUTH_TOKEN_KEY = 'adminAuthToken';
+// This would be your actual base URL for the API
+const API_BASE_URL = 'https://codizone.in';
 
-/**
- * Stores the authentication token in localStorage.
- * IMPORTANT: localStorage is vulnerable to XSS attacks. For production,
- * consider more secure alternatives like HttpOnly cookies or managing tokens in memory.
- * @param {string} token - The authentication token.
- */
-export const storeAuthToken = (token) => {
-  localStorage.setItem(AUTH_TOKEN_KEY, token);
-};
-
-/**
- * Retrieves the authentication token from localStorage.
- * @returns {string|null} The token, or null if not found.
- */
-export const getAuthToken = () => {
-  return localStorage.getItem(AUTH_TOKEN_KEY);
-};
-
-/**
- * Removes the authentication token from localStorage (e.g., on logout).
- */
-export const clearAuthToken = () => {
-  localStorage.removeItem(AUTH_TOKEN_KEY);
-};
-
-/**
- * A helper function to make fetch requests with common headers (like Authorization).
- * @param {string} endpoint - The API endpoint (e.g., '/user/count').
- * @param {object} options - Fetch options (method, body, etc.).
- * @returns {Promise<any>} - The JSON response from the API.
- * @throws {Error} - Throws an error if the response is not OK.
- */
+// A generic fetch wrapper (optional, but good practice)
 const apiFetch = async (endpoint, options = {}) => {
-  const token = getAuthToken(); // Retrieve the dynamically stored token
+  const { body, ...customConfig } = options;
+  const headers = { 'Content-Type': 'application/json' };
 
-  const headers = {
-    'Content-Type': 'application/json',
-    ...options.headers, // Allow overriding or adding headers
+  // Retrieve token for authenticated requests
+  const token = getAuthToken(); // Assuming getAuthToken is defined in this file
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`; // Adjust if your auth scheme is different
+  }
+
+  const config = {
+    method: body ? (customConfig.method || 'POST') : 'GET',
+    ...customConfig, // Spread the rest of the options, excluding body
+    headers: {
+      ...headers,
+      ...customConfig.headers,
+    },
   };
 
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
+  if (body && typeof body === 'object') { // Ensure body is stringified if it's an object
+    config.body = JSON.stringify(body);
+  } else if (body) {
+    config.body = body;
   }
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, { ...options, headers });
-
-  if (!response.ok) {
-    // Attempt to parse error message from response body if available
-    let errorDetail = `HTTP error! status: ${response.status}`;
-    try {
-      const errorData = await response.json();
-      if (errorData && errorData.message) {
-        errorDetail += `, message: ${errorData.message}`;
-      } else if (errorData) {
-         errorDetail += `, details: ${JSON.stringify(errorData)}`;
-      }
-    } catch (parseError) {
-      // Ignore JSON parsing error if response body is not JSON
-      errorDetail += `, statusText: ${response.statusText}`;
+  try {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: response.statusText }));
+      const error = new Error(errorData.message || `API Error: ${response.status} - ${response.url}`);
+      error.response = response;
+      error.data = errorData;
+      throw error;
     }
-    throw new Error(`${errorDetail} for ${endpoint}`);
+    if (response.status === 204) { // Handle No Content response
+        return null;
+    }
+    return await response.json();
+  } catch (error) {
+    console.error(`API Fetch Error (${config.method} ${API_BASE_URL}${endpoint}):`, error.data || error.message);
+    throw error; // Re-throw to be caught by the component
   }
-
-  // Handle cases where the API might return 204 No Content
-  if (response.status === 204) {
-      return null;
-  }
-
-  return response.json();
 };
 
-// --- User Management ---
+// Simulates fetching business details by ID
+export const getBusinessDetailsById = async (id) => {
+  if (!id) throw new Error("Business ID is required to fetch details.");
+  return await apiFetch(`/business-partner/${id}`); // GET request
+};
 
+// Simulates updating business details
+export const updateBusinessDetailsAPI = async (id, data) => {
+  if (!id) throw new Error("Business ID is required to update details.");
+  // Assumes your API updates a specific partner via PUT /business-partner/{id}
+  return await apiFetch(`/business-partner/${id}`, { method: 'PUT', body: data });
+};
+
+// Function for Dashboard: Get User Count
 export const getUserCount = async () => {
-  const data = await apiFetch('/user/count');
-  return data.count !== undefined ? data.count : data; // Adjust based on your API response structure (e.g., { count: 123 } or just 123)
+  const responseData = await apiFetch('/user/count');
+  console.log("API Response for /user/count (from getUserCount):", responseData);
+  // Check if responseData itself is the count, or if it's an object containing count
+  if (typeof responseData === 'number') {
+    return responseData;
+  } else if (responseData && typeof responseData.count === 'number') {
+    return responseData.count;
+  }
+  console.warn("getUserCount received unexpected data format or error, defaulting to 0. Response:", responseData);
+  return 0; // Fallback value
 };
 
-export const getAllUsers = async () => {
-  return await apiFetch('/user/all'); // Assumes the API returns an array of users directly
-};
-
-// --- Business Partner Management ---
-
+// Function for Dashboard: Get Business Partner Count
+// Function for Dashboard: Get Business Partner Count
 export const getBusinessPartnerCount = async () => {
-  const data = await apiFetch('/business-partner/count');
-  return data.count !== undefined ? data.count : data; // Adjust based on your API response structure
+  const responseData = await apiFetch('/business-partner/count');
+  console.log("API Response for /business-partner/count (from getBusinessPartnerCount):", responseData);
+  // Check if responseData itself is the count, or if it's an object containing count
+  if (typeof responseData === 'number') {
+    return responseData; // This will now correctly return 15 if responseData is 15
+  } else if (responseData && typeof responseData.count === 'number') {
+    return responseData.count;
+  }
+  console.warn("getBusinessPartnerCount received unexpected data format or error, defaulting to 0. Response:", responseData);
+  return 0; // Fallback value
+};
+// Function to clear authentication token (example implementation)
+export const clearAuthToken = () => {
+  console.log("Clearing auth token from localStorage");
+  // In a real application, you would clear the token from localStorage or sessionStorage
+  localStorage.removeItem('authToken');
 };
 
+// Function to store authentication token (example implementation)
+export const storeAuthToken = (token) => {
+  console.log("Storing auth token in localStorage:", token);
+  // In a real application, you would store the token in localStorage or sessionStorage
+  localStorage.setItem('authToken', token);
+};
+
+// Function to get all business partners
 export const getAllBusinessPartners = async () => {
-  return await apiFetch('/business-partner/all'); // Assumes the API returns an array of business partners directly
+  return await apiFetch('/business-partner/all'); // GET request
 };
 
-export const updateBusinessPartner = async (updateData) => {
-  return await apiFetch('/business-partner', { method: 'PUT', body: JSON.stringify(updateData) });
+// Function to get authentication token (example implementation)
+export const getAuthToken = () => {
+  console.log("Getting auth token from localStorage");
+  // In a real application, you would retrieve the token from localStorage or sessionStorage
+  return localStorage.getItem('authToken');
+  // return "simulated_auth_token_12345"; // Example token if not using localStorage yet
 };
 
-// --- Promotions Management ---
-
-export const getAllPromotions = async () => {
-  return await apiFetch('/promotions/all'); // Assumes the API returns an array of promotions directly
-};
-
-export const addPromotion = async (promotionData) => {
-  return await apiFetch('/promotions/add', { method: 'POST', body: JSON.stringify(promotionData) });
-};

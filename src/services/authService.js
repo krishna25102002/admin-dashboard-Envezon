@@ -2,7 +2,7 @@
 
 import { storeAuthToken, clearAuthToken } from './apiService';
 
-const API_BASE_URL = 'http://codizone.in'; // Ensure this is your correct API base URL
+const API_BASE_URL = 'https://codizone.in'; // Ensure this is your correct API base URL
 
 /**
  * Attempts to log in the admin user by sending credentials to the backend.
@@ -19,7 +19,7 @@ export async function loginAdmin(username, password) {
     // on your backend server that handles admin login requests.
     // This is the endpoint that will verify the username/password
     // and return a JWT token upon success.
-    const loginEndpoint = `${API_BASE_URL}/admin/login`; // EXAMPLE: '/admin/login' or '/auth/token'
+    const loginEndpoint = `${API_BASE_URL}/auth/login`; // EXAMPLE: '/admin/login' or '/auth/token'
 
     const response = await fetch(loginEndpoint, {
       method: 'POST',
@@ -32,7 +32,7 @@ export async function loginAdmin(username, password) {
       // Sending 'phoneNumber' and 'otp' to align with your database schema.
       // The 'username' variable from the function argument will contain the phone number entered by the user.
       // The 'password' variable from the function argument will contain the OTP entered by the user.
-      body: JSON.stringify({ phoneNumber: username, otp: password }),
+      body: JSON.stringify({ phone: username, otp: Number(password) }),
     });
 
     if (!response.ok) {
@@ -48,9 +48,9 @@ export async function loginAdmin(username, password) {
 
     const data = await response.json();
 
-    if (data && data.token) { // Adjust 'data.token' if your backend uses a different key
-      storeAuthToken(data.token);
-      return data.token;
+    if (data && data.access_token) { // Adjust 'data.token' if your backend uses a different key
+      storeAuthToken(data.access_token);
+      return data.access_token;
     } else {
       throw new Error('Login successful, but token not found in response.');
     }
