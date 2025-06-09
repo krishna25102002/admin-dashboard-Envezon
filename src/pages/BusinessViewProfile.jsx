@@ -20,13 +20,14 @@ function BusinessViewProfile({ isSidebarOpen }) {
     pincode: "",
     phoneNumber: "",
     email: "",
-    moreDetails: "",
+    moreDetails: "", // This will hold the original string-based moreDetails if present
     isApproved: false,
     subCategories: [], // Ensure this is an array
     aproxLatitude: "", // Added from sample
     aproxLongitude: "", // Added from sample
   });
   const [initialFormData, setInitialFormData] = useState(null); // To store original fetched data for cancel
+  const [customDetails, setCustomDetails] = useState([{ name: '', detail: '' }]); // For the new array format
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -62,6 +63,22 @@ function BusinessViewProfile({ isSidebarOpen }) {
         console.log('BusinessViewProfile: Fetched API Details:', maindetails); // Log the raw API response
         const details = maindetails.find(item => item.id === Number(businessId));
 
+        let legacyMoreDetailsString = "";
+        let newCustomDetailsArray = [{ name: '', detail: '' }];
+
+        if (details && details.moreDetails) {
+          if (typeof details.moreDetails === 'string') {
+            legacyMoreDetailsString = details.moreDetails;
+            // Optionally, you could try to parse this string if it has a known structure,
+            // or initialize customDetails with one item based on it.
+            // For now, we keep them separate.
+          } else if (Array.isArray(details.moreDetails) && details.moreDetails.length > 0) {
+            newCustomDetailsArray = details.moreDetails;
+          } else if (Array.isArray(details.moreDetails) && details.moreDetails.length === 0) {
+            newCustomDetailsArray = [{ name: '', detail: '' }]; // Ensure at least one empty for editing
+          }
+        }
+
 
         if (details && typeof details === 'object' && Object.keys(details).length > 0) {
           // Map API response to formData structure, handling potential key differences
@@ -77,7 +94,7 @@ function BusinessViewProfile({ isSidebarOpen }) {
             pincode: details.pincode || details.Pincode || "",
             phoneNumber: details.phoneNumber || details.PhoneNumber || details.phone_number || "",
             email: details.email || "",
-            moreDetails: details.moreDetails || details.MoreDetails || details.more_details || "",
+            moreDetails: legacyMoreDetailsString, // Store the original string here
             // Ensure isApproved is explicitly a boolean
             isApproved: typeof details.isApproved === 'boolean' ? details.isApproved : (typeof details.IsApproved === 'boolean' ? details.IsApproved : (typeof details.is_approved === 'boolean' ? details.is_approved : false)),
             // Ensure subCategories is always an array
@@ -86,7 +103,9 @@ function BusinessViewProfile({ isSidebarOpen }) {
             aproxLongitude: details.aproxLongitude !== undefined ? String(details.aproxLongitude) : "",
           };
           setFormData(mappedDetails);
-          setInitialFormData(mappedDetails); // Store for cancel functionality
+          setCustomDetails(newCustomDetailsArray);
+          // For cancel, we need to store both formData and customDetails
+          setInitialFormData({ ...mappedDetails, customDetails: newCustomDetailsArray });
         } else {
           console.warn("Business details not found or API returned empty/invalid data for ID:", businessId, "Received:", details);
           setError(`Business details not found for ID: ${businessId}.`);
@@ -118,9 +137,15 @@ function BusinessViewProfile({ isSidebarOpen }) {
     setError(null);
     setSuccessMessage('');
     try {
-      await updateBusinessDetailsAPI(businessId, formData); // This calls your apiService
+      // Prepare payload: API should expect 'moreDetails' as the array of custom fields
+      const payload = {
+        ...formData,
+        moreDetails: customDetails.filter(cd => cd.name && cd.detail), // Send only filled custom details
+      };
+      await updateBusinessDetailsAPI(businessId, payload); // This calls your apiService
       setSuccessMessage("Business details updated successfully!");
-      setInitialFormData(formData); // Update initial data to current after successful save
+      // After successful save, update initialFormData to reflect the new saved state
+      setInitialFormData({ ...formData, customDetails: customDetails.filter(cd => cd.name && cd.detail) });
       setIsEditing(false);
     } catch (err) {
       console.error("API Update Error:", err);
@@ -136,7 +161,10 @@ function BusinessViewProfile({ isSidebarOpen }) {
 
   const handleEditToggle = () => {
     if (isEditing && initialFormData) {
-      setFormData(initialFormData); // Revert to original data on cancel
+      // Revert both formData and customDetails
+      const { customDetails: initialCustom, ...initialForm } = initialFormData;
+      setFormData(initialForm);
+      setCustomDetails(initialCustom || [{ name: '', detail: '' }]);
     }
     setIsEditing(!isEditing);
     setError(null); // Clear any previous errors when toggling edit mode
@@ -148,10 +176,14 @@ function BusinessViewProfile({ isSidebarOpen }) {
     setError(null);
     setSuccessMessage('');
     try {
-      const updatedData = { ...formData, isApproved: true };
+      const updatedData = { 
+        ...formData, 
+        isApproved: true,
+        moreDetails: customDetails.filter(cd => cd.name && cd.detail) // Send current custom details
+      };
       await updateBusinessDetailsAPI(businessId, updatedData); // This calls your apiService
-      setFormData(updatedData); // Update local state to reflect approval
-      setInitialFormData(updatedData); // Update initial data as well
+      setFormData(prev => ({...prev, isApproved: true})); // Update local state to reflect approval
+      setInitialFormData(prev => ({...prev, isApproved: true, customDetails: customDetails.filter(cd => cd.name && cd.detail)})); // Update initial data as well
       setSuccessMessage("Business approved successfully!");
     } catch (err) {
       console.error("API Approve Error:", err);
@@ -161,20 +193,58 @@ function BusinessViewProfile({ isSidebarOpen }) {
     }
   };
 
+  const handleMoreDetailChange = (index, event) => {
+    const { name, value } = event.target;
+    const updatedCustomDetails = customDetails.map((item, i) =>
+      i === index ? { ...item, [name]: value } : item
+    );
+    setCustomDetails(updatedCustomDetails);
+  };
+
+  const handleAddMoreDetailField = () => {
+    setCustomDetails(prevDetails => [
+      ...prevDetails,
+      { name: '', detail: '' },
+    ]);
+  };
+
+  const handleRemoveMoreDetailField = (index) => {
+    if (customDetails.length <= 1 && !customDetails[0]?.name && !customDetails[0]?.detail) {
+        // If it's the last item and it's empty, don't "remove" to an empty array, just keep it empty.
+        return; 
+    }
+    setCustomDetails(customDetails.filter((_, i) => i !== index));
+  };
+
+  // Define available sub-category options
+  const subCategoryOptions = [
+    "Venue", "Catering Service", "Decorator", 
+    "Photographer",  "Music Band", "DJ", "Bridal Wear", 
+    "Groom Wear", "Makeup Artist", "Hair Stylist", "Invitations", 
+    "Wedding Cake", "Transportation", "Return Gifts", // Add more options as needed
+  ];
+
+  const serviceOptions = [
+    "All", 
+    "Wedding",
+    "Reception",
+    "Brithday",
+    "Anniversary",
+    "Corporate Event",
+    "Puberty Function"
+  ];
   // Define fields for rendering
   const editableFields = [
     { name: 'businessName', label: 'Business Name', type: 'text', placeholder: 'Enter business name' },
     { name: 'proprietorName', label: 'Proprietor Name', type: 'text', placeholder: 'Enter proprietor name' },
-    { name: 'serviceProvided', label: 'Service Provided', type: 'text', placeholder: 'e.g., Wedding, Catering' },
-    { name: 'price', label: 'Approx. Price (INR)', type: 'text', placeholder: 'e.g., 10000' },
+    { name: 'serviceProvided', label: 'Service Provided', type: 'select', options: serviceOptions },
+    { name: 'price', label: 'Approx. Price (INR)', type: 'number', placeholder: 'e.g., 10000' },
     { name: 'phoneNumber', label: 'Phone Number', type: 'tel', placeholder: 'Enter 10-digit phone number' },
     { name: 'email', label: 'Email Address', type: 'email', placeholder: 'Enter contact email' },
     { name: 'location', label: 'Full Address', type: 'textarea', placeholder: 'Enter full street address' },
     { name: 'district', label: 'District', type: 'text', placeholder: 'e.g., Coimbatore' },
     { name: 'state', label: 'State', type: 'text', placeholder: 'e.g., Tamil Nadu' },
     { name: 'pincode', label: 'Pincode', type: 'text', placeholder: 'e.g., 641004' },
-    { name: 'moreDetails', label: 'Additional Details & Features', type: 'textarea', placeholder: 'Enter seating capacity, AC/Non-AC, catering options, etc.' },
-    { name: 'isApproved', label: 'Approval Status', type: 'checkbox' },
     { name: 'aproxLatitude', label: 'Approx. Latitude', type: 'text', placeholder: 'e.g., 11.03' },
     { name: 'aproxLongitude', label: 'Approx. Longitude', type: 'text', placeholder: 'e.g., 76.98' },
   ];
@@ -182,7 +252,7 @@ function BusinessViewProfile({ isSidebarOpen }) {
   // Helper function to render form fields or display text
   function renderField(fieldName) {
     const field = editableFields.find(f => f.name === fieldName);
-    if (!field) return null;
+    if (!field) return null; // isApproved is handled directly in JSX
 
     const value = formData[field.name];
 
@@ -191,9 +261,7 @@ function BusinessViewProfile({ isSidebarOpen }) {
         <label htmlFor={field.name}>{field.label}</label>
         {!isEditing ? (
           <span>
-            {field.type === 'checkbox'
-              ? (value ? 'Yes' : 'No')
-              : (value !== null && value !== undefined && value !== '' ? String(value) : 'N/A')}
+            {(value !== null && value !== undefined && value !== '' ? String(value) : 'N/A')}
           </span>
         ) : field.type === 'textarea' ? (
             <textarea
@@ -202,22 +270,24 @@ function BusinessViewProfile({ isSidebarOpen }) {
               value={value || ''}
               onChange={handleChange}
               placeholder={field.placeholder}
-              rows={field.name === 'location' ? 3 : (field.name === 'moreDetails' ? 5 : 4)}
+              rows={field.name === 'location' ? 3 : 4}
               disabled={isSubmitting}
             />
-          ) : field.type === 'checkbox' ? (
-            <div className="checkbox-wrapper">
-              <input
-                type="checkbox"
-                id={field.name}
-                name={field.name}
-                checked={Boolean(value)}
-                onChange={handleChange}
-                className="form-checkbox"
-                disabled={isSubmitting}
-              />
-            </div>
-          ) : (
+          ) : field.type === 'select' ? (
+            <select
+              id={field.name}
+              name={field.name}
+              value={value || ''}
+              onChange={handleChange}
+              disabled={isSubmitting}
+              className="form-select"
+            >
+              <option value="" disabled>{`Select ${field.label}`}</option>
+              {field.options && field.options.map(option => (
+                <option key={option} value={option}>{option}</option>
+              ))}
+            </select>
+          ) : ( // Catches 'text', 'number', 'tel', 'email'
             <input
               type={field.type}
               id={field.name}
@@ -233,6 +303,23 @@ function BusinessViewProfile({ isSidebarOpen }) {
     );
   }
 
+  const handleSubCategoryChange = (e) => {
+    const { value, checked } = e.target;
+    setFormData(prevData => {
+      const currentSubCategories = prevData.subCategories || [];
+      if (checked) {
+        // Add to array if not already present
+        return { ...prevData, subCategories: [...new Set([...currentSubCategories, value])] };
+      } else {
+        // Remove from array
+        return { ...prevData, subCategories: currentSubCategories.filter(sc => sc !== value) };
+      }
+    });
+  };
+
+
+
+
   if (isLoading) {
     return (
       <div className={`profile-container ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
@@ -244,7 +331,6 @@ function BusinessViewProfile({ isSidebarOpen }) {
     );
   }
 
-  // If there was an error and we don't have initial form data (meaning fetch failed critically)
   if (error && !initialFormData) {
     return (
       <div className={`profile-container ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
@@ -267,17 +353,16 @@ function BusinessViewProfile({ isSidebarOpen }) {
           ← Back
         </button>
         <h1 className="header-main-title">Business Profile</h1>
-        <button type="button" className="header-action-button edit-button-header" onClick={handleEditToggle} disabled={isLoading || isSubmitting || !initialFormData /* Disable if initial fetch failed */}>
+        <button type="button" className="header-action-button edit-button-header" onClick={handleEditToggle} disabled={isLoading || isSubmitting || !initialFormData}>
           {isEditing ? 'Cancel' : 'Edit'}
         </button>
       </div>
 
       {successMessage && <p className="success-message">{successMessage}</p>}
-      {/* Display general error if not in edit mode, or if initial fetch failed and we are trying to edit */}
       {error && (!isEditing || (isEditing && !initialFormData)) && <p className="error-message">{error}</p>}
 
 
-      {initialFormData ? ( // Only render form if initial data was successfully fetched
+      {initialFormData ? ( 
         <form onSubmit={handleSubmit} className="profile-form">
           <fieldset className="form-section">
             <legend>Basic Information</legend>
@@ -309,7 +394,63 @@ function BusinessViewProfile({ isSidebarOpen }) {
 
           <fieldset className="form-section">
             <legend>Additional Details</legend>
-            {renderField('moreDetails')}
+            {formData.moreDetails && (
+              <div className="form-group legacy-more-details">
+                <label>Legacy Additional Details (Read-only):</label>
+                <p className="read-only-text">{formData.moreDetails}</p>
+              </div>
+            )}
+
+            <label style={{ display: 'block', marginBottom: '10px', fontWeight: '600' }}>Custom Details:</label>
+            {!isEditing ? (
+              Array.isArray(customDetails) && customDetails.some(item => item.name && item.detail) ? (
+                customDetails.map((item, index) =>
+                  item.name && item.detail ? (
+                    <div key={index} className="form-group more-detail-item-view">
+                      <strong className="custom-detail-name">{item.name}:</strong>
+                      <span>{item.detail}</span>
+                    </div>
+                  ) : null
+                )
+              ) : (
+                <div className="form-group"><span>N/A</span></div>
+              )
+            ) : (
+              <>
+                {customDetails.map((item, index) => (
+                  <div key={index} className="custom-detail-editor-item">
+                    <input
+                      type="text"
+                      name="name"
+                      className="custom-detail-input-name"
+                      placeholder="Detail Name (e.g., Seating)"
+                      value={item.name}
+                      onChange={(e) => handleMoreDetailChange(index, e)}
+                      disabled={isSubmitting}
+                    />
+                    <input
+                      type="text"
+                      name="detail"
+                      className="custom-detail-input-value"
+                      placeholder="Detail Value (e.g., 500 guests)"
+                      value={item.detail}
+                      onChange={(e) => handleMoreDetailChange(index, e)}
+                      disabled={isSubmitting}
+                    />
+                    {(customDetails.length > 1 || (customDetails.length === 1 && (item.name || item.detail))) && (
+                    <button type="button" onClick={() => handleRemoveMoreDetailField(index)} className="remove-detail-button" disabled={isSubmitting}>
+                      &times;
+                    </button>
+                    )}
+                  </div>
+                ))}
+              </>
+            )}
+            {isEditing && (
+              <button type="button" onClick={handleAddMoreDetailField} className="add-detail-button" disabled={isSubmitting}>
+                + Add Custom Detail
+              </button>
+            )}
             <div className="form-group">
               <label>Sub-Categories:</label>
               {!isEditing ? (
@@ -319,15 +460,25 @@ function BusinessViewProfile({ isSidebarOpen }) {
                     : 'N/A'}
                 </span>
               ) : (
-                <input 
-                  type="text" 
-                  name="subCategories" 
-                  value={Array.isArray(formData.subCategories) ? formData.subCategories.join(', ') : ''} 
-                  onChange={(e) => setFormData(prev => ({...prev, subCategories: e.target.value.split(',').map(s => s.trim()).filter(s => s)}))}
-                  placeholder="Enter sub-categories, comma-separated"
-                  disabled={isSubmitting}
-                />
-                // For a better UX, consider a tag input component for subCategories
+                <div className="subcategories-checkbox-group">
+                  {subCategoryOptions.map(option => (
+                    <div key={option} className="checkbox-item">
+                      <input
+                        type="checkbox"
+                        id={`subcategory-${option.replace(/\s+/g, '-')}`} // Create a unique ID
+                        name="subCategories"
+                        value={option}
+                        checked={(formData.subCategories || []).includes(option)}
+                        onChange={handleSubCategoryChange}
+                        disabled={isSubmitting}
+                        className="form-checkbox"
+                      />
+                      <label htmlFor={`subcategory-${option.replace(/\s+/g, '-')}`}>
+                        {option}
+                      </label>
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           </fieldset>
@@ -341,7 +492,24 @@ function BusinessViewProfile({ isSidebarOpen }) {
           </fieldset>
           <fieldset className="form-section">
             <legend>Admin Controls</legend>
-            {renderField('isApproved')}
+            <div className="form-group">
+              <label htmlFor="isApproved">Approval Status</label>
+              {!isEditing ? (
+                <span>{formData.isApproved ? 'Yes' : 'No'}</span>
+              ) : (
+                <div className="checkbox-wrapper">
+                  <input
+                    type="checkbox"
+                    id="isApproved"
+                    name="isApproved"
+                    checked={Boolean(formData.isApproved)}
+                    onChange={handleChange}
+                    className="form-checkbox"
+                    disabled={isSubmitting}
+                  />
+                </div>
+              )}
+            </div>
           </fieldset>
 
           {!formData.isApproved && !isEditing && (
@@ -363,13 +531,9 @@ function BusinessViewProfile({ isSidebarOpen }) {
               </button>
             </div>
           )}
-          {/* Display error during editing if it occurs on submit */}
           {error && isEditing && <p className="error-message" style={{ marginTop: '10px' }}>{error}</p>}
         </form>
       ) : (
-        // This part is shown if initialFormData is null and not loading,
-        // which means the initial fetch failed but didn't set a general error message
-        // that prevented rendering (e.g. API returned null or empty object).
         !isLoading && <p className="error-message">Could not load business details. Please try again or contact support.</p>
       )}
     </div>
