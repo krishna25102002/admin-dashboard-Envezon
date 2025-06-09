@@ -48,19 +48,58 @@ const apiFetch = async (endpoint, options = {}) => {
   }
 };
 
-// Simulates fetching business details by ID
 export const getBusinessDetailsById = async (id) => {
-  if (!id) throw new Error("Business ID is required to fetch details.");
-  return await apiFetch(`/business-partner/${id}`); // GET request
+  // Ensure this path is correct. Examples:
+  // '/business-partner/${id}'
+  // '/api/business-partner/${id}'
+  // '/business-partners/${id}' (plural)
+  const endpointPath = `/business-partner/all`; // <--- VERIFY THIS PATH WITH POSTMAN
+  const fullUrl = `${API_BASE_URL}${endpointPath}`;
+
+  console.log('Attempting to fetch business details from (apiService.js):', fullUrl);
+
+  const token = localStorage.getItem('authToken'); // Or however you get your token
+  const headers = {
+    'Content-Type': 'application/json',
+  };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const response = await fetch(fullUrl, { headers });
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({ message: `HTTP error! status: ${response.status} at ${response.url}` }));
+    throw new Error(errorData.message || `API Error: ${response.status} - ${response.url}`);
+  }
+  return response.json();
 };
 
-// Simulates updating business details
 export const updateBusinessDetailsAPI = async (id, data) => {
-  if (!id) throw new Error("Business ID is required to update details.");
-  // Assumes your API updates a specific partner via PUT /business-partner/{id}
-  return await apiFetch(`/business-partner/${id}`, { method: 'PUT', body: data });
-};
+  // Ensure this path is correct for updates.
+  const endpointPath = `/business-partner/`; // <--- VERIFY THIS PATH WITH POSTMAN
+  const fullUrl = `${API_BASE_URL}${endpointPath}`;
+  console.log('Attempting to update business details at (apiService.js):', fullUrl);
 
+  const token = localStorage.getItem('authToken');
+  const headers = {
+    'Content-Type': 'application/json',
+  };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const response = await fetch(fullUrl, {
+    method: 'PUT', // Or 'POST' or 'PATCH' depending on your API
+    headers: headers,
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({ message: `HTTP error! status: ${response.status} at ${response.url}` }));
+    throw new Error(errorData.message || `Failed to update business details: ${response.status}`);
+  }
+  return response.json();
+};
 
 // Function to get all users
 export const getAllUsers = async () => {
@@ -134,3 +173,19 @@ export const addPromotion = async (promotionData) => {
   return await apiFetch('/promotions/add', { method: 'POST', body: promotionData });
 };
 
+
+export const deletePromotionById = async (promotionId) => {
+  const response = await fetch(`${API_BASE_URL}/promotions/delete`, {
+    method: 'DELETE',
+  });
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({ message: `HTTP error! status: ${response.status}` }));
+    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+  }
+  // DELETE might not return a body or could return a success message.
+  // If it returns 204 No Content, response.json() will fail.
+  if (response.status === 204) {
+    return { success: true, message: "Promotion deleted successfully." };
+  }
+  return response.json(); // Or handle as appropriate for your API
+};

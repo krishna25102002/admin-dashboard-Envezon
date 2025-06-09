@@ -41,13 +41,17 @@ function BusinessManagement({ isSidebarOpen }) {
         setErrorList(null);
         const data = await getAllBusinessPartners();
         console.log("Fetched All Businesses (Raw from API in BusinessManagement):", JSON.stringify(data, null, 2));
-        // Filter for approved businesses immediately
-        const approvedBusinesses = (data || []).filter(business => business.isApproved === true);
-        setAllBusinesses(approvedBusinesses);
-        setFilteredBusinesses(data || []); // Initially show all
+        // Filter for approved businesses
+        setAllBusinesses((data || []).filter(business => business.isApproved));
+        // Initially, filteredBusinesses should also respect the approved filter.
+        // If you want to show all and then filter, the logic for allBusinesses and filteredBusinesses initialization would differ.
+        // For now, assuming filteredBusinesses should also start with approved ones.
+        setFilteredBusinesses((data || []).filter(business => business.isApproved)); 
       } catch (err) {
         setErrorList(err);
         console.error("Failed to fetch business partners list:", err);
+        setAllBusinesses([]);
+        setFilteredBusinesses([]);
       } finally {
         setIsLoadingList(false);
       }
@@ -57,8 +61,8 @@ function BusinessManagement({ isSidebarOpen }) {
 
   // Effect to filter businesses when selectedService or allBusinesses changes
   useEffect(() => {
-    // Filter only from the already approved businesses stored in allBusinesses state
-    const businessesToFilter = allBusinesses.filter(business => business.isApproved === true);
+    // allBusinesses state already contains only approved businesses from the initial load
+    const businessesToFilter = allBusinesses;
 
     if (selectedService === 'All Services') {
       setFilteredBusinesses(businessesToFilter);
@@ -77,7 +81,7 @@ function BusinessManagement({ isSidebarOpen }) {
       {/* Header Section */}
       <div className="business-management-header">
         <div className="header-left">
-          <span className="back-arrow">←</span>
+          <span className="back-arrow" onClick={() => navigate(-1)} style={{cursor: 'pointer'}}>←</span>
           <h1>Business Management</h1>
         </div>
         <div className="header-right">
@@ -133,15 +137,13 @@ function BusinessManagement({ isSidebarOpen }) {
             </tr>
           </thead>
           <tbody>
-            {!isLoadingList &&
-              filteredBusinesses.length > 0 &&
+            {!isLoadingList && !errorList && filteredBusinesses.length > 0 ? (
               filteredBusinesses.map((business) => {
                 // Log the specific business object and its isApproved status right before rendering
                 console.log(
-                  // `Rendering business in table: ID: ${business.id}, Name: ${business.businessName}, isApproved: ${business.isApproved}, typeof isApproved: ${typeof business.isApproved}`
-                   `BusinessManagement - Rendering Row: ID=${business.id}, Name="${business.businessName}", isApproved=${business.isApproved} (Type: ${typeof business.isApproved})`
+                  `BusinessManagement - Rendering Row: ID=${business.id}, Name="${business.businessName}", isApproved=${business.isApproved} (Type: ${typeof business.isApproved})`
                 );
-                const isActive = !!business.isApproved; // Explicit boolean conversion
+                const isActive = business.isApproved; // isApproved should already be a boolean
                 return (
                   <tr key={business.id}>
                     <td>{business.id}</td>
@@ -153,19 +155,19 @@ function BusinessManagement({ isSidebarOpen }) {
                         {isActive ? 'Active' : 'Inactive'}
                       </span>
                     </td>
-                    <td>
+                     <td>
                       <Link to={`/business-profile/${business.id}`} className="view-profile">
                         view profile
                       </Link>
                     </td>
                   </tr>
                 );
-              })}
-            {!isLoadingList && filteredBusinesses.length === 0 && !errorList && (
+              })
+            ) : !isLoadingList && !errorList && filteredBusinesses.length === 0 ? (
               <tr>
                 <td colSpan="6" style={{ textAlign: 'center' }}>No vendors found.</td>
               </tr>
-            )}
+            ) : null}
           </tbody>
         </table>
       </div>

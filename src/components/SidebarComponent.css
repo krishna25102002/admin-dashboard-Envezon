@@ -44,6 +44,7 @@
   
   /* Active state primarily for main navigation items */
   .sidebar nav ul li a.active {
+    margin-top: 50px;
     background-color: #FC9256; /* Primary Orange for active state */
     color: white;
     font-weight: 600; /* Bolder for active state */

@@ -67,19 +67,20 @@ function UserManagement({ isSidebarOpen }) {
             </tr>
           </thead>
           <tbody>
-            {!loading && !error && users.map((user, index) => (
-              // It's better to use a unique ID from the user data if available, e.g., user.id
-              <tr key={user.id || index}> 
-                <td>{user.id || 'N/A'}</td>
-                <td>{user.name || 'N/A'}</td>
-                <td>{user.phone || user.phoneNumber || 'N/A'}</td> {/* Check API field name */}
-              </tr>
-            ))}
-            {!loading && !error && users.length === 0 && (
-              <tr>
-                <td colSpan="3" style={{ textAlign: 'center' }}>No users found.</td>
-              </tr>
-            )}
+            {!loading && !error && users.length > 0 ? (
+              users.map((user, index) => (
+                // It's better to use a unique ID from the user data if available, e.g., user.id
+                <tr key={user.id || index}>
+                  <td>{user.id || 'N/A'}</td>
+                  <td>{user.name || 'N/A'}</td>
+                  <td>{user.phone || user.phoneNumber || 'N/A'}</td> {/* Check API field name */}
+                </tr>
+              ))
+            ) : !loading && !error && users.length === 0 ? (
+                <tr>
+                  <td colSpan="3" style={{ textAlign: 'center' }}>No users found.</td>
+                </tr>
+            ) : null}
           </tbody>
         </table>
       </div>

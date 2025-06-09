@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
-import { getAllPromotions, addPromotion } from '../services/apiService'; // API calls uncommented
+import { getAllPromotions, addPromotion, deletePromotionById } from '../services/apiService'; // API calls uncommented
 import { IoMdAddCircleOutline } from 'react-icons/io'; // Import an icon for adding
 import '../styles/Promotions.css'; // Import the new CSS file
+import { FaTrash } from 'react-icons/fa'; // Import trash icon for delete
+
 
 function Promotions({ isSidebarOpen }) {
   const [promotions, setPromotions] = useState([]); // Initialize with empty array for API data
@@ -15,6 +17,8 @@ function Promotions({ isSidebarOpen }) {
     // For now, assuming isApproved is handled by backend or defaults
   });
   const [isSubmitting, setIsSubmitting] = useState(false); // For add form submission
+  const [deletingItemId, setDeletingItemId] = useState(null); // To track which item is being deleted
+
 
   const fetchPromotions = async () => {
     setLoading(true);
@@ -46,6 +50,7 @@ function Promotions({ isSidebarOpen }) {
 
   const handleSubmitNewPromotion = async (e) => {
     e.preventDefault();
+
     // Basic validation - enhance as needed
     if (!newPromotionData.businessId || !newPromotionData.position /* Add other required fields here */) {
       alert("Business ID and Position (and other required fields) are required.");
@@ -82,6 +87,29 @@ function Promotions({ isSidebarOpen }) {
     }
   };
 
+  const handleDeletePromotion = async (promotionId) => {
+    if (!window.confirm("Are you sure you want to delete this promotion?")) {
+      return;
+    }
+
+    setDeletingItemId(promotionId);
+    setError(null); // Clear previous errors
+
+    try {
+      console.log(`Attempting to delete promotion with ID: ${promotionId}`); // Added for debugging
+      await deletePromotionById(promotionId);
+      setPromotions(prevPromotions => prevPromotions.filter(promo => promo.id !== promotionId));
+      console.log(`Promotion ${promotionId} deleted successfully from UI.`); // Added for debugging
+      // No alert needed, visual removal is feedback.
+    } catch (err) {
+      console.error(`Failed to delete promotion ${promotionId}:`, err);
+      setError(err.message || "Failed to delete promotion.");
+      // No alert for error, error message will be displayed on the page.
+    } finally {
+      setDeletingItemId(null);
+    }
+  };
+
   if (loading && promotions.length === 0) return <div className={`promotions-page ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}><p className="loading-message">Loading promotions...</p></div>;
   // Keep error display for fetch errors, form errors will be handled separately if needed
   if (error && promotions.length === 0) return <div className={`promotions-page ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}><p className="error-message">Error fetching promotions: {error}</p></div>;
@@ -96,6 +124,11 @@ function Promotions({ isSidebarOpen }) {
         </button>
       </div>
 
+      {/* Display general page errors (e.g., from deletion) here, but not if modal is open and showing its own error */}
+      {error && !showAddModal && <p className="error-message" style={{ textAlign: 'center', color: 'red', marginTop: '10px' }}>{error}</p>}
+
+      
+
       <div className="promotions-grid">
         {/* Add Promotion Card */}
         <div className="add-promotion-card" onClick={() => setShowAddModal(true)}>
@@ -106,6 +139,14 @@ function Promotions({ isSidebarOpen }) {
         {/* Existing Promotion Cards */}
         {promotions.map(promo => (
           <div key={promo.id} className="promotion-card">
+            <button
+              className="delete-promo-button"
+              onClick={() => handleDeletePromotion(promo.id)}
+              disabled={deletingItemId === promo.id || isSubmitting}
+              aria-label="Delete promotion"
+            >
+              {deletingItemId === promo.id ? <span className="spinner-small"></span> : <FaTrash />}
+            </button>
             {/* You'll need to adjust what's displayed based on your promotion object structure */}
             <h3>{promo.title || `Business ID: ${promo.businessId}`}</h3>
             <p>Position: {promo.position}</p>
@@ -119,15 +160,15 @@ function Promotions({ isSidebarOpen }) {
             {/* Add more details or actions (edit/delete) here if needed */}
           </div>
         ))}
-        {promotions.length === 0 && !loading && <p>No promotions found.</p>}
-      </div>
+          {promotions.length === 0 && !loading && !error && <p>No promotions found.</p>}
+           </div>
 
       {/* Add Promotion Modal */}
       {showAddModal && (
         <div className="modal-overlay">
           <div className="modal-content">
             <h2>Add New Promotion</h2>
-            {error && <p className="error-message" style={{textAlign: 'center'}}>{error}</p>} {/* Display form submission error */}
+                {error && showAddModal && <p className="error-message" style={{textAlign: 'center'}}>{error}</p>} {/* Display form submission error specifically for modal */}
             <form onSubmit={handleSubmitNewPromotion}>
               <div>
                 <label htmlFor="businessId">Business ID*:</label>

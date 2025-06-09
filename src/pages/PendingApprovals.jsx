@@ -143,26 +143,27 @@ function PendingApprovals({ isSidebarOpen }) {
             </tr>
           </thead>
           <tbody>
-            {!loading && !error && filteredBusinesses.map((business, index) => (
-              <tr key={index} className={index % 2 === 0 ? 'even-row' : 'odd-row'}>
-                <td>{business.id || 'N/A'}</td>
-                <td>{business.businessName || 'N/A'}</td>
-                <td>{business.serviceProvided || 'N/A'}</td>
-                <td>{business.phoneNumber || 'N/A'}</td>
-                <td>{business.plan || 'N/A'}</td> {/* Assuming 'plan' is a field */}
-                <td>Pending</td> {/* Since we filter for !isApproved, status is implicitly Pending */}
-                <td>
-                  <Link to={`/business-profile/${(business.id)}`} className="view-link">
-                    View
-                  </Link>
-                </td>
-              </tr>
-            ))}
-            {!loading && !error && filteredBusinesses.length === 0 && (
-              <tr>
-                <td colSpan="7" style={{ textAlign: 'center' }}>No pending approvals found.</td>
-              </tr>
-            )}
+            {!loading && !error && filteredBusinesses.length > 0 ? (
+              filteredBusinesses.map((business, index) => (
+                <tr key={business.id || index} className={index % 2 === 0 ? 'even-row' : 'odd-row'}>
+                  <td>{business.id || 'N/A'}</td>
+                  <td>{business.businessName || 'N/A'}</td>
+                  <td>{business.serviceProvided || 'N/A'}</td>
+                  <td>{business.phoneNumber || 'N/A'}</td>
+                  <td>{business.plan || 'N/A'}</td> {/* Assuming 'plan' is a field */}
+                  <td>Pending</td> {/* Since we filter for !isApproved, status is implicitly Pending */}
+                  <td>
+                    <Link to={`/business-profile/${(business.id)}`} className="view-link">
+                      View
+                    </Link>
+                  </td>
+                </tr>
+              ))
+            ) : !loading && !error && filteredBusinesses.length === 0 ? (
+                <tr>
+                  <td colSpan="7" style={{ textAlign: 'center' }}>No pending approvals found.</td>
+                </tr>
+            ) : null}
           </tbody>
         </table>
       </div>
