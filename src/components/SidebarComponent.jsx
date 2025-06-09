@@ -26,11 +26,7 @@ function SidebarComponent({ handleLogout }) {
               Pending Approvals
             </Link>
           </li>
-          <li>
-            <Link to="/content">
-              Content (Approved)
-            </Link>
-          </li>
+      
           
           <li>
             <Link to="/promotions">

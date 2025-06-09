@@ -119,9 +119,9 @@ function Promotions({ isSidebarOpen }) {
     <div className={`promotions-page ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
       <div className="promotions-header">
         <h1>Promotions</h1>
-        <button className="add-promo-button" onClick={() => setShowAddModal(true)}>
+        {/* <button className="add-promo-button" onClick={() => setShowAddModal(true)}>
           + Add Promotion
-        </button>
+        </button> */}
       </div>
 
       {/* Display general page errors (e.g., from deletion) here, but not if modal is open and showing its own error */}

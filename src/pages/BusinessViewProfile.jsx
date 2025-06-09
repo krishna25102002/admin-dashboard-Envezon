@@ -59,9 +59,8 @@ function BusinessViewProfile({ isSidebarOpen }) {
       try {
         console.log(`BusinessViewProfile: Fetching details for business ID: ${businessId}`);
         const maindetails = await getAllBusinessPartners(); // This calls your apiService
-        console.log('BusinessViewProfile: Fetched API Details:', JSON.stringify(maindetails, null, 2)); // Log the raw API response
-        const detailsAsString = JSON.stringify(maindetails);
-        const details = detailsAsString.find(item => item.id === businessId);
+        console.log('BusinessViewProfile: Fetched API Details:', maindetails); // Log the raw API response
+        const details = maindetails.find(item => item.id === Number(businessId));
 
 
         if (details && typeof details === 'object' && Object.keys(details).length > 0) {
