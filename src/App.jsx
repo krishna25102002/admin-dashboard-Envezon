@@ -36,7 +36,7 @@ const MainAppLayout = ({
             <span className="hamburger-line"></span>
             <span className="hamburger-line"></span>
           </button>
-          <h1 className="company-name">Envezon</h1> {/* Corrected typo from Evnazon if intended */}
+          <h1 className="company-name">Envzon</h1> {/* Corrected typo from Evnazon if intended */}
         </div>
         <div className="header-right">
           <div className="profile-container" onClick={toggleProfileDropdown}>

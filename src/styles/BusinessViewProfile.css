@@ -2,10 +2,13 @@
 .profile-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  /* padding: 20px; Reduced padding for a tighter layout */
+  /* align-items: center; Removed align-items: center to allow content to take full width */
+  /* justify-content: center; Removed justify-content: center */
+  padding: 20px; /* Added overall padding */
   margin: 0 auto; /* Center the container */
+  max-width: 1000px; /* Limit max width for better readability on large screens */
+  width: 100%; /* Ensure it takes full width up to max-width */
+  box-sizing: border-box; /* Include padding in width */
   /* background-color: #f9fbfd; Light background */
   border-radius: 12px;
   transition: margin-left 0.3s ease-in-out;
@@ -13,11 +16,11 @@
 
 /* Sidebar adjustments */
 .profile-container.sidebar-open {
-  margin-left: 60px;
+  margin-left: 90px;
 }
 
 .profile-container.sidebar-closed {
-  margin-left: 80px;
+  margin-left: 200px;
 }
 
 /* Header styling */
@@ -25,29 +28,35 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 15px; /* Added horizontal padding for better alignment */
-  margin-bottom: 20px; /* Reduced margin for a tighter layout */
+  padding: 10px 0; /* Adjusted padding */
+  margin-bottom: 30px; /* Increased margin below header */
   border-bottom: 2px solid #ff9500;
   width: 100%;
 }
 
 .header-main-title {
-  font-size: 1.5em; /* Slightly reduced for better proportion */
+  font-size: 1.8em; /* Slightly larger title */
   color: #ff6200;
   margin: 0;
   text-align: center;
   flex-grow: 1;
+  font-weight: 700; /* Make title bold */
 }
 
 .header-action-button {
   border: 1px solid transparent;
-  padding: 8px 12px; /* Adjusted padding for smaller, neater buttons */
+  padding: 8px 15px; /* Adjusted padding */
   border-radius: 6px;
   cursor: pointer;
-  font-size: 0.9em; /* Reduced font size for better proportion */
+  font-size: 0.9em;
   font-weight: 500;
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.1s ease; /* Added transform transition */
   white-space: nowrap;
+  margin: 0 5px; /* Add space between buttons */
+}
+
+.header-action-button:active {
+    transform: translateY(1px); /* Subtle press effect */
 }
 
 .back-button-header {
@@ -69,41 +78,57 @@
   color: #fff;
 }
 
+.edit-button-header:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
 /* Form styling */
 .profile-form {
   display: flex;
   flex-direction: column;
-  gap: 25px; /* Slightly reduced gap for a more compact form */
+  gap: 30px; /* Increased gap between sections */
   width: 100%;
 }
 
-.form-section {
-  background-color: #ffffff;
-  padding: 25px 30px; /* Added horizontal padding for better alignment */
-  border-radius: 12px;
-  border: 1px solid #dfe6ee;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+fieldset.form-section {
+  background-color: #ffffff; /* Ensures the fieldset content area is white */
+  border: 1px solid #cccccc; /* Defines a border for the fieldset */
+  /* Adjust padding: top padding should be larger to make space for the legend. */
+  padding: 1.8em 1.5em 1.5em 1.5em; /* Increased padding for more breathing room */
+  margin-bottom: 0; /* Remove margin-bottom here, gap handles spacing */
+  position: relative;
+  border-radius: 8px; /* Rounded corners for fieldset */
+  transition: box-shadow 0.3s ease, transform 0.3s ease; /* Added transition for hover */
 }
 
-.form-section:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+fieldset.form-section:hover {
+  transform: translateY(-5px); /* More pronounced lift effect */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12); /* Stronger shadow on hover */
 }
 
-.form-section legend {
-  font-weight: 600;
-  color: #ff6200;
-  padding: 0 10px;
-  font-size: 1.1em; /* Slightly reduced for better proportion */
-  margin-left: 0; /* Removed negative margin for better alignment */
-  margin-bottom: 20px; /* Reduced margin for tighter spacing */
+fieldset.form-section legend {
+  font-weight: bold;         /* Make text bold */
+  text-transform: uppercase; /* Make text uppercase */
+  color: #4A5C6F;           /* Use a professional, readable dark color */
+  background-color: #ffffff; /* Crucial: Match fieldset background to "sit inside" */
+  padding: 4px 12px;         /* Add padding around the legend text */
+  margin-left: 20px;         /* Indent legend from the left edge */
+  font-size: 0.95em;         /* Set a clear font size */
+  letter-spacing: 0.8px;     /* Increase letter spacing slightly */
+  line-height: 1.2;
+  border-radius: 100px;
+  /* Position adjustments are usually not needed as legend naturally positions */
 }
+
+/* Removed the conflicting .form-section legend rule */
+
 
 .form-row-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 15px 20px; /* Slightly reduced gap for a more compact layout */
+  gap: 20px 30px; /* Increased gap within the grid */
 }
 
 .form-group {
@@ -112,29 +137,31 @@
 }
 
 .form-group.textarea-full-width {
-  grid-column: 1 / -1;
+  grid-column: 1 / -1; /* Make textarea take full width in the grid */
 }
 
 .form-group label {
-  margin-bottom: 6px; /* Reduced margin for tighter spacing */
-  font-weight: 500;
+  margin-bottom: 8px; /* Adjusted margin */
+  font-weight: 600; /* Slightly bolder label */
   color: #4a5c6f;
-  font-size: 0.85em; /* Slightly reduced for better proportion */
+  font-size: 0.9em; /* Slightly larger label font */
   text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .form-group input[type="text"],
 .form-group input[type="email"],
 .form-group input[type="tel"],
 .form-group input[type="number"],
-.form-group textarea {
-  padding: 10px 12px; /* Slightly reduced padding for a neater look */
+.form-group textarea,
+.form-group .form-select { /* Added select */
+  padding: 12px 15px; /* Increased padding for larger input fields */
   border: 1px solid #ffcc80;
   border-radius: 8px;
-  font-size: 0.9em;
+  font-size: 1em; /* Standard font size */
   width: 100%;
   box-sizing: border-box;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Smoother transition */
   background-color: #fdfdfe;
   color: #333;
 }
@@ -142,14 +169,15 @@
 .form-group input::placeholder,
 .form-group textarea::placeholder {
   color: #ffab40;
-  opacity: 1;
+  opacity: 0.8; /* Make placeholder slightly less prominent */
 }
 
 .form-group input:focus,
-.form-group textarea:focus {
+.form-group textarea:focus,
+.form-group .form-select:focus { /* Added select */
   border-color: #ff9500;
   background-color: #fff;
-  box-shadow: 0 0 0 0.2rem rgba(255, 149, 0, 0.15);
+  box-shadow: 0 0 0 0.25rem rgba(255, 149, 0, 0.2); /* Slightly larger, softer shadow */
   outline: none;
 }
 
@@ -157,59 +185,213 @@
   display: flex;
   align-items: center;
   background-color: #fdfdfe;
-  padding: 10px 12px; /* Reduced padding to match inputs */
+  padding: 12px 15px; /* Match input padding */
   border: 1px solid #ffcc80;
   border-radius: 8px;
-  min-height: calc(1.5em + 20px + 2px); /* Adjusted to match input height */
+  min-height: calc(1em + 24px + 2px); /* Adjusted to match input height */
 }
 
 .form-group input[type="checkbox"].form-checkbox {
-  height: 16px; /* Slightly reduced for better proportion */
-  width: 16px;
-  margin-right: 10px;
+  height: 18px; /* Slightly larger checkbox */
+  width: 18px;
+  margin-right: 12px; /* Adjusted margin */
   accent-color: #ff9500;
+  cursor: pointer;
 }
 
 .form-group textarea {
-  min-height: 80px;
+  min-height: 100px; /* Increased min-height */
   resize: vertical;
 }
 
 .form-group span {
-  padding: 10px 12px; /* Reduced padding to match inputs */
+  padding: 12px 15px; /* Match input padding */
   background-color: #fff3e0;
   border-radius: 8px;
-  font-size: 0.9em;
+  font-size: 1em; /* Standard font size */
   color: #4a5c6f;
-  min-height: calc(1.5em + 20px + 2px);
+  min-height: calc(1em + 24px + 2px); /* Adjusted to match input height */
   display: flex;
   align-items: center;
   border: 1px solid #ffcc80;
+  word-break: break-word; /* Prevent long text from overflowing */
 }
+
+/* Read-only text for legacy details */
+.form-group .read-only-text {
+    background-color: #e0e0e0; /* Different background for read-only */
+    color: #555;
+    border-color: #ccc;
+    font-style: italic;
+}
+
+
+/* Custom Details Editor */
+.custom-detail-editor-item {
+    display: grid;
+    grid-template-columns: minmax(100px, 1fr) minmax(150px, 2fr) auto; /* Name, Value, Button */
+    gap: 10px; /* Gap between items */
+    align-items: center;
+    margin-bottom: 10px; /* Space between rows */
+}
+
+.custom-detail-editor-item input {
+    padding: 8px 12px; /* Smaller padding for these inputs */
+    font-size: 0.9em;
+}
+
+.custom-detail-input-name {
+    /* Specific styles if needed */
+}
+
+.custom-detail-input-value {
+    /* Specific styles if needed */
+}
+
+.remove-detail-button {
+    background-color: #e57373; /* Light red */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 1.1em;
+    line-height: 1;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    height: fit-content; /* Adjust height to fit content */
+}
+
+.remove-detail-button:hover {
+    background-color: #ef5350; /* Red */
+}
+
+.remove-detail-button:active {
+    transform: translateY(1px);
+}
+
+.remove-detail-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
+.add-detail-button {
+    background-color: #81c784; /* Light green */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-size: 0.9em;
+    margin-top: 10px;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.add-detail-button:hover {
+    background-color: #66bb6a; /* Green */
+}
+
+.add-detail-button:active {
+    transform: translateY(1px);
+}
+
+.add-detail-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Custom Details View */
+.more-detail-item-view {
+    display: flex;
+    align-items: baseline; /* Align text baselines */
+    margin-bottom: 8px; /* Space between items */
+    font-size: 1em;
+    color: #4a5c6f;
+}
+
+.more-detail-item-view strong {
+    margin-right: 8px; /* Space between name and detail */
+    color: #333; /* Darker color for the name */
+    font-weight: 600;
+}
+
+.more-detail-item-view span {
+    /* Inherits styles from .form-group span, but let's refine */
+    padding: 0; /* Remove padding */
+    background: none; /* Remove background */
+    border: none; /* Remove border */
+    min-height: unset; /* Remove min-height */
+    display: inline; /* Display inline */
+    word-break: break-word; /* Ensure long details wrap */
+}
+
+
+/* Subcategories Checkbox Group */
+.subcategories-checkbox-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Adjust min width as needed */
+    gap: 10px 15px; /* Gap between checkboxes */
+    padding: 10px 12px; /* Add padding */
+    border: 1px solid #ffcc80; /* Add border */
+    border-radius: 8px; /* Add border radius */
+    background-color: #fdfdfe; /* Add background */
+}
+
+.subcategories-checkbox-group .checkbox-item {
+    display: flex;
+    align-items: center;
+}
+
+.subcategories-checkbox-group .checkbox-item input[type="checkbox"] {
+    margin-right: 8px; /* Space between checkbox and label */
+    cursor: pointer;
+}
+
+.subcategories-checkbox-group .checkbox-item label {
+    margin-bottom: 0; /* Remove margin-bottom */
+    font-weight: normal; /* Normal font weight for label */
+    text-transform: none; /* No uppercase */
+    font-size: 1em; /* Standard font size */
+    color: #333;
+    cursor: pointer;
+}
+
 
 /* Form actions (submit button) */
 .form-actions {
   display: flex;
   justify-content: flex-end;
-  margin-top: 20px; /* Reduced margin for a tighter layout */
-  padding-top: 15px; /* Reduced padding for a tighter layout */
+  margin-top: 30px; /* Increased margin above actions */
+  padding-top: 20px; /* Increased padding above actions */
   border-top: 2px solid #ff9500;
   width: 100%;
 }
 
+.form-actions.centered-actions {
+    justify-content: center; /* Center buttons if needed */
+}
+
 .action-button {
-  padding: 10px 20px; /* Slightly reduced padding for a neater button */
+  padding: 12px 25px; /* Increased padding for larger buttons */
   border-radius: 8px;
-  font-size: 0.9em; /* Reduced for better proportion */
-  font-weight: 500;
+  font-size: 1em; /* Standard font size */
+  font-weight: 600; /* Bolder text */
   cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.1s ease;
+  transition: background-color 0.2s ease, transform 0.1s ease, opacity 0.2s ease; /* Added opacity transition */
   border: none;
+  min-width: 120px; /* Ensure minimum width */
+  text-align: center;
 }
 
 .action-button:active {
   transform: translateY(1px);
 }
+
+.action-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 
 .submit-button {
   background-color: #ff9500;
@@ -219,6 +401,16 @@
 .submit-button:hover {
   background-color: #e67e22;
 }
+
+.approve-button {
+    background-color: #4CAF50; /* Green color for approve */
+    color: white;
+}
+
+.approve-button:hover {
+    background-color: #388E3C; /* Darker green */
+}
+
 
 .error-back-button {
   background-color: #ff9500;
@@ -231,27 +423,80 @@
 }
 
 /* Error and Success Messages */
-.error-message.form-error,
+.error-message,
 .success-message {
-  padding: 10px 12px; /* Reduced padding for consistency */
+  padding: 12px 15px; /* Increased padding */
   border-radius: 8px;
-  margin-bottom: 15px; /* Reduced margin for tighter spacing */
+  margin-bottom: 20px; /* Increased margin */
   text-align: center;
-  font-size: 0.9em;
+  font-size: 1em;
+  font-weight: 500;
+  border: 1px solid transparent; /* Add border */
+  opacity: 1; /* Ensure visibility */
+  animation: fadeIn 0.5s ease-out; /* Subtle fade-in animation */
 }
 
-.error-message.form-error {
-  background-color: #fbe9e7;
+.error-message {
+  background-color: #ffebee; /* Lighter red */
   color: #c62828;
-  border: 1px solid #ffccbc;
+  border-color: #ef9a9a; /* Light red border */
 }
 
 .success-message {
-  background-color: #e8f5e9;
+  background-color: #e8f5e9; /* Lighter green */
   color: #2e7d32;
-  border: 1px solid #c8e6c9;
+  border-color: #a5d6a7; /* Light green border */
 }
 
-.empty-placeholder {
-  min-height: 1px;
+/* Animation Keyframes */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .profile-container {
+        padding: 15px; /* Reduce padding on smaller screens */
+    }
+
+    .profile-view-header {
+        flex-direction: column; /* Stack header items */
+        align-items: flex-start;
+        margin-bottom: 20px;
+    }
+
+    .header-main-title {
+        font-size: 1.6em;
+        margin-bottom: 15px; /* Space below title */
+        text-align: left;
+    }
+
+    .header-action-button {
+        margin: 0 5px 0 0; /* Adjust button spacing */
+    }
+
+    .form-row-grid {
+        grid-template-columns: 1fr; /* Stack grid items */
+        gap: 20px; /* Adjust gap */
+    }
+
+    fieldset.form-section {
+        padding: 1.5em 1em 1em 1em; /* Reduce fieldset padding */
+    }
+
+    fieldset.form-section legend {
+        margin-left: 10px; /* Reduce legend indent */
+    }
+
+    .custom-detail-editor-item {
+        grid-template-columns: 1fr auto; /* Stack name/value, keep button */
+        gap: 5px;
+    }
+
+    .custom-detail-editor-item input {
+        grid-column: 1 / -1; /* Make inputs take full width */
+    }
+}
+
