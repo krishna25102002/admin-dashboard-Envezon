@@ -6,7 +6,7 @@ function Profile({ isSidebarOpen }) {
   const [isEditing, setIsEditing] = useState(false);
   const [userData, setUserData] = useState({
     name: 'Admin', // This should also ideally be fetched
-    loginPhoneNumber: '', // Initialize as empty, will be fetched
+    loginPhoneNumber: 'storedphonenumber', // Initialize as empty, will be fetched
     address: '123 Main St, City', // This should also ideally be fetched
   });
   const [editedData, setEditedData] = useState({ ...userData });
@@ -74,11 +74,10 @@ function Profile({ isSidebarOpen }) {
                 <span>{userData.name}</span>
               )}
             </div>
-            <div className="info-row">
+            {/* <div className="info-row">
               <span>Login Phone:</span>
-              {/* Login phone number is typically not editable directly here for security */}
               <span>{userData.loginPhoneNumber}</span>
-            </div>
+            </div> */}
             
           </div>
           
