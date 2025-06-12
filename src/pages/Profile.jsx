@@ -87,4 +87,4 @@ function Profile({ isSidebarOpen }) {
   );
 }
 
-export default Profile;
+export default Profile;   

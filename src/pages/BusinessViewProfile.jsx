@@ -63,38 +63,45 @@ function BusinessViewProfile({ isSidebarOpen }) {
         console.log('BusinessViewProfile: Fetched API Details:', maindetails); // Log the raw API response
         const details = maindetails.find(item => item.id === Number(businessId));
 
-        let legacyMoreDetailsString = "";
-        let newCustomDetailsArray = [{ name: '', detail: '' }];
+        let legacyMoreDetailsString = ""; // For formData.moreDetails if API data is a non-JSON string
+        let newCustomDetailsArray = [{ name: '', detail: '' }]; // For customDetails state
 
         if (details && details.moreDetails) {
           if (typeof details.moreDetails === 'string') {
-            legacyMoreDetailsString = details.moreDetails;
-            // Optionally, you could try to parse this string if it has a known structure,
-            // or initialize customDetails with one item based on it.
-            // For now, we keep them separate.
-          } else if (Array.isArray(details.moreDetails) && details.moreDetails.length > 0) {
-            newCustomDetailsArray = details.moreDetails;
-          } else if (Array.isArray(details.moreDetails) && details.moreDetails.length === 0) {
-            newCustomDetailsArray = [{ name: '', detail: '' }]; // Ensure at least one empty for editing
+            try {
+              const parsed = JSON.parse(details.moreDetails);
+              if (Array.isArray(parsed)) {
+                // Successfully parsed as JSON array - this is the new format
+                newCustomDetailsArray = parsed.length > 0 ? parsed : [{ name: '', detail: '' }];
+                // legacyMoreDetailsString remains empty as it's not legacy data.
+              } else {
+                // Parsed, but not an array (e.g., a JSON string like "\"text\"" or a number). Treat as legacy.
+                legacyMoreDetailsString = details.moreDetails;
+                console.warn("moreDetails from API was a string but not a JSON array. Treating as legacy:", details.moreDetails);
+              }
+            } catch (e) {
+              // Failed to parse as JSON. Assume it's a legacy string.
+              legacyMoreDetailsString = details.moreDetails;
+              console.log("moreDetails is a non-JSON string, treating as legacy:", details.moreDetails);
+            }
+          } else if (Array.isArray(details.moreDetails)) {
+            // API returned an array directly. This is the new format.
+            // This might happen if backend is inconsistent or for data not yet persisted as string.
+            newCustomDetailsArray = details.moreDetails.length > 0 ? details.moreDetails : [{ name: '', detail: '' }];
+            console.warn("API returned moreDetails as an array directly. Processing as new format.");
+          } else {
+            // moreDetails is present but neither string nor array.
+            console.warn("moreDetails from API is of unexpected type:", typeof details.moreDetails, details.moreDetails);
           }
         }
-
 
         if (details && typeof details === 'object' && Object.keys(details).length > 0) {
           // Map API response to formData structure, handling potential key differences
           const mappedDetails = {
             id: details.id || businessId,
             businessName: details.businessName || details.BusinessName || details.business_name || "",
-            proprietorName: details.proprietorName || details.ProprietorName || details.proprietor_name || "",
-            price: details.price !== undefined ? String(details.price) : "", // Ensure price is a string for the form
-            serviceProvided: details.serviceProvided || details.ServiceProvided || details.service_provided || "",
-            location: details.location || details.Location || "",
-            state: details.state || details.State || "",
-            district: details.district || details.District || "",
-            pincode: details.pincode || details.Pincode || "",
-            phoneNumber: details.phoneNumber || details.PhoneNumber || details.phone_number || "",
-            email: details.email || "",
-            moreDetails: legacyMoreDetailsString, // Store the original string here
+            // ... (other fields remain the same)
+            moreDetails: legacyMoreDetailsString, // Populates the legacy field ONLY if it was a non-JSON string
             // Ensure isApproved is explicitly a boolean
             isApproved: typeof details.isApproved === 'boolean' ? details.isApproved : (typeof details.IsApproved === 'boolean' ? details.IsApproved : (typeof details.is_approved === 'boolean' ? details.is_approved : false)),
             // Ensure subCategories is always an array
@@ -137,15 +144,19 @@ function BusinessViewProfile({ isSidebarOpen }) {
     setError(null);
     setSuccessMessage('');
     try {
-      // Prepare payload: API should expect 'moreDetails' as the array of custom fields
+      const filteredCustomDetails = customDetails.filter(cd => cd.name && cd.detail);
       const payload = {
         ...formData,
-        moreDetails: customDetails.filter(cd => cd.name && cd.detail), // Send only filled custom details
+        moreDetails: JSON.stringify(filteredCustomDetails), // Send as JSON string
       };
       await updateBusinessDetailsAPI(businessId, payload); // This calls your apiService
       setSuccessMessage("Business details updated successfully!");
       // After successful save, update initialFormData to reflect the new saved state
-      setInitialFormData({ ...formData, customDetails: customDetails.filter(cd => cd.name && cd.detail) });
+      setInitialFormData({
+        ...formData, // current form field values
+        moreDetails: "", // Legacy string is cleared as new format is saved
+        customDetails: filteredCustomDetails
+      });
       setIsEditing(false);
     } catch (err) {
       console.error("API Update Error:", err);
@@ -176,14 +187,21 @@ function BusinessViewProfile({ isSidebarOpen }) {
     setError(null);
     setSuccessMessage('');
     try {
+      const filteredCustomDetails = customDetails.filter(cd => cd.name && cd.detail);
       const updatedData = { 
         ...formData, 
         isApproved: true,
-        moreDetails: customDetails.filter(cd => cd.name && cd.detail) // Send current custom details
+        moreDetails: JSON.stringify(filteredCustomDetails) // Send as JSON string
       };
       await updateBusinessDetailsAPI(businessId, updatedData); // This calls your apiService
       setFormData(prev => ({...prev, isApproved: true})); // Update local state to reflect approval
-      setInitialFormData(prev => ({...prev, isApproved: true, customDetails: customDetails.filter(cd => cd.name && cd.detail)})); // Update initial data as well
+      // Update initialFormData to reflect the newly approved and saved state
+      setInitialFormData({
+        ...formData, // current state of all form fields
+        isApproved: true,
+        moreDetails: "", // Legacy string is cleared
+        customDetails: filteredCustomDetails
+      });
       setSuccessMessage("Business approved successfully!");
     } catch (err) {
       console.error("API Approve Error:", err);
@@ -456,7 +474,7 @@ function BusinessViewProfile({ isSidebarOpen }) {
               {!isEditing ? (
                 <span>
                   {Array.isArray(formData.subCategories) && formData.subCategories.length > 0
-                    ? formData.subCategories.join(', ')
+                     ? formData.subCategories.join(', ')
                     : 'N/A'}
                 </span>
               ) : (
