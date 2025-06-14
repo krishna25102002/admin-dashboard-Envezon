@@ -528,6 +528,11 @@ function BusinessViewProfile({ isSidebarOpen }) {
             )}
 
             <label style={{ display: 'block', marginBottom: '10px', fontWeight: '600' }}>Custom Details:</label>
+            {isEditing && (
+              <p style={{ fontSize: '0.95em', color: '#555', marginTop: '-5px', marginBottom: '10px' }}>
+                <em>Note: For Google Maps links, use "gmap" as the Detail Name, then paste the link as the Detail Value.</em>
+              </p>
+            )}           
             {!isEditing ? (
               Array.isArray(customDetails) && customDetails.some(item => item.name && item.detail) ? (
                 customDetails.map((item, index) =>
