@@ -35,6 +35,7 @@ function BusinessViewProfile({ isSidebarOpen }) {
     aproxLatitude: "", 
     aproxLongitude: "", 
     images: [], 
+
   });
   const [initialFormData, setInitialFormData] = useState(null); 
   const [customDetails, setCustomDetails] = useState([{ name: '', detail: '' }]); 
@@ -154,7 +155,7 @@ function BusinessViewProfile({ isSidebarOpen }) {
         id: img.id, // This might be null for very new images if not handled perfectly by upload response
         url: img.url 
       }));
-
+        
       const payload = {
         ...formData,
         moreDetails: JSON.stringify(filteredCustomDetails), 
@@ -164,8 +165,17 @@ function BusinessViewProfile({ isSidebarOpen }) {
       setSuccessMessage("Business details updated successfully!");
       // After successful save, update initialFormData to reflect the new saved state
       // This includes the newly saved images.
+
+      const newFormData = {
+  ...formData,
+  images: formData.images.map((item) => ({
+    ...item,
+    isdeletedisable: false
+  }))
+};
+ setFormData(newFormData)
       setInitialFormData({
-        ...formData, // current form field values, including potentially new images
+        ...newFormData, // current form field values, including potentially new images
         moreDetails: "", 
         customDetails: filteredCustomDetails
       });
@@ -285,20 +295,32 @@ function BusinessViewProfile({ isSidebarOpen }) {
       console.log('BusinessViewProfile: Received from uploadBusinessImage service (raw):', newImage); 
       console.log('BusinessViewProfile: Type of newImage.id:', typeof newImage?.id, 'Value:', newImage?.id);
       console.log('BusinessViewProfile: Type of newImage.url:', typeof newImage?.url, 'Value:', newImage?.url);
-      if (newImage && typeof newImage.url === 'string' && newImage.url.trim() !== '' && (typeof newImage.id === 'string' || typeof newImage.id === 'number') && newImage.id !== null && newImage.id !== undefined) {
-        const newImageObject = { id: newImage.id, url: newImage.url };
-        setFormData(prevFormData => {
-          const updatedImages = [...(prevFormData.images || []), newImageObject];
+       setFormData(prevFormData => {
+          const updatedImages = [...(prevFormData.images || []), 
+        {
+         id: prevFormData.images.length + 1,
+         url: URL.createObjectURL(file),
+         isdeletedisable:true
+        }];
           return {
             ...prevFormData,
             images: updatedImages
           };
         });
-        setSuccessMessage('Image uploaded successfully! It will be fully saved when you click "Save Changes".');
-      } else {
-        console.error('Uploaded image data is not in expected format:', newImage);
-        setError('Failed to process uploaded image data. API did not return expected format.');
-      }
+      // if (newImage && typeof newImage.url === 'string' && newImage.url.trim() !== '' && (typeof newImage.id === 'string' || typeof newImage.id === 'number') && newImage.id !== null && newImage.id !== undefined) {
+      //   const newImageObject = { id: newImage.id, url: newImage.url };
+      //   setFormData(prevFormData => {
+      //     const updatedImages = [...(prevFormData.images || []), newImageObject];
+      //     return {
+      //       ...prevFormData,
+      //       images: updatedImages
+      //     };
+      //   });
+      //   setSuccessMessage('Image uploaded successfully! It will be fully saved when you click "Save Changes".');
+      // } else {
+      //   console.error('Uploaded image data is not in expected format:', newImage);
+      //   setError('Failed to process uploaded image data. API did not return expected format.');
+      // }
     } catch (err) {
       console.error('Error uploading image:', err);
       const errorMessage = err.response?.data?.message || err.message || 'Failed to upload image.';
@@ -310,6 +332,7 @@ function BusinessViewProfile({ isSidebarOpen }) {
       }
     }
   };
+
 
   const handleDeleteImage = async (imageIdToDelete) => {
     if (!imageIdToDelete || !window.confirm('Are you sure you want to delete this image?')) return;
@@ -628,7 +651,7 @@ function BusinessViewProfile({ isSidebarOpen }) {
                       onClick={() => handleOpenImageModal(image.url, index)}
                       style={{ cursor: 'pointer' }}
                     />
-                    {isEditing && image.id && ( 
+                    {isEditing && image.id && !image.isdeletedisable &&( 
                       <button
                         type="button"
                         className="delete-image-button"

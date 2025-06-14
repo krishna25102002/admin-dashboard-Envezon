@@ -270,32 +270,6 @@ export const uploadBusinessImage = async (imageFile, businessPartnerId) => {
       return { id: apiResponseData.id, url: apiResponseData.url };
     }
 
-    // Example 2: If backend returns { data: { id: "...", url: "..." } }
-    if (apiResponseData && apiResponseData.data && apiResponseData.data.id && apiResponseData.data.url) {
-      console.log("API Service: Parsed from nested 'data' object.");
-      return { id: apiResponseData.data.id, url: apiResponseData.data.url };
-    }
-    
-    // Example 3: If backend returns an array with a single image object
-    // (This is less common for a single upload but possible)
-    if (Array.isArray(apiResponseData) && apiResponseData.length > 0 && apiResponseData[0].id && apiResponseData[0].url) {
-      console.log("API Service: Parsed from the first element of an array.");
-      return { id: apiResponseData[0].id, url: apiResponseData[0].url };
-    }
-
-    // Example 4: If backend returns something like { image_id: "...", image_url: "..." }
-    if (apiResponseData && apiResponseData.image_id && apiResponseData.image_url) {
-      console.log("API Service: Parsed from custom keys 'image_id' and 'image_url'.");
-      return { id: apiResponseData.image_id, url: apiResponseData.image_url };
-    }
-    
-    // Example 5: If backend returns { file: { s3_id: "...", link: "..." } } (based on a previous discussion)
-     if (apiResponseData && apiResponseData.file && apiResponseData.file.s3_id && apiResponseData.file.link) {
-      console.log("API Service: Parsed from nested 'file' object with 's3_id' and 'link'.");
-      return { id: apiResponseData.file.s3_id, url: apiResponseData.file.link };
-    }
-
-
     // If none of the above structures match, the format is unexpected.
     console.error("API Service: Could not parse expected id and url from /s3-image response. Response was:", apiResponseData);
     return null; // Or throw new Error('API returned unexpected format for image upload.');
