@@ -76,10 +76,10 @@ function PendingApprovals({ isSidebarOpen }) {
           <h1>Pending Approvals</h1>
         </div>
         <div className="header-right">
-          <div className="search-bar">
+          {/* <div className="search-bar">
             <input type="text" placeholder="Search" />
             <span className="search-icon">🔍</span>
-          </div>
+          </div> */}
           {/* <div className="date-dropdown">
             <span onClick={() => {}} className="date-text">Today</span>
             <span className="dropdown-arrow">▼</span>

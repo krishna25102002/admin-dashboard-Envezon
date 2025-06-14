@@ -240,13 +240,7 @@ fieldset.form-section legend {
     font-size: 0.9em;
 }
 
-.custom-detail-input-name {
-    /* Specific styles if needed */
-}
 
-.custom-detail-input-value {
-    /* Specific styles if needed */
-}
 
 .remove-detail-button {
     background-color: #e57373; /* Light red */
@@ -499,4 +493,211 @@ fieldset.form-section legend {
         grid-column: 1 / -1; /* Make inputs take full width */
     }
 }
+/* In ../styles/BusinessViewProfile.css */
+
+/* ... your existing styles ... */
+
+.images-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px; /* Spacing between images */
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  background-color: #fdfdfd;
+}
+
+.image-item {
+  border: 1px solid #ddd;
+  padding: 5px;
+  border-radius: 4px;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  display: flex; 
+  justify-content: center;
+  align-items: center;
+}
+
+.image-item img {
+  max-width: 150px; 
+  max-height: 150px; 
+  height: auto;     
+  display: block;
+  border-radius: 3px;
+  /* cursor: pointer; /* Already added inline, but can be here too */
+}
+/* --- Image Modal Styles --- */
+.image-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8); /* Darker, semi-transparent background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050; /* Ensure it's on top of other content */
+  backdrop-filter: blur(8px); /* Apply background blur */
+  -webkit-backdrop-filter: blur(8px); /* For Safari */
+  padding: 15px; /* Add some padding for smaller screens */
+  box-sizing: border-box;
+}
+
+.image-modal-content {
+  position: relative;
+  padding: 5px; /* Minimal padding if background is white, adjust as needed */
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden; /* Prevents image from spilling out if it's too large before fully loaded */
+}
+
+.enlarged-image {
+  display: block;
+  max-width: 50%; /* Fill the content area */
+  max-height: 70%; /* Fill the content area */
+  border-radius: 4px; /* Slight rounding if modal content has padding */
+}
+
+.image-modal-close-button {
+  position: absolute;
+  top: 10px; /* Adjust as needed */
+  right: 10px; /* Adjust as needed */
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  font-size: 28px; /* Larger for better visibility */
+  font-weight: bold;
+  width: 40px; /* Larger tap target */
+  height: 40px; /* Larger tap target */
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  z-index: 1051; /* Above the image if it overlaps */
+  transition: background-color 0.2s ease;
+}
+
+.image-modal-close-button:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.image-nav-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  font-size: 30px; /* Larger arrows */
+  font-weight: bold;
+  padding: 0;
+  cursor: pointer;
+  z-index: 1051; /* Above the image */
+  border-radius: 50%;
+  width: 50px; /* Larger tap target */
+  height: 50px; /* Larger tap target */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+  user-select: none; /* Prevent text selection on double click */
+}
+
+.image-nav-button:hover {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.image-nav-button.prev {
+  left: 10px; /* Adjust as needed */
+}
+
+.image-nav-button.next {
+  right: 10px; /* Adjust as needed */
+}
+
+
+/* --- Add Photo Button Styles --- */
+.add-photo-section {
+  margin-top: 20px;
+  padding: 15px;
+  border: 2px dashed #e0e0e0; /* Lighter, dashed border for the section */
+  border-radius: 8px;
+  text-align: center;
+  background-color: #f9f9f9; /* Light background for the section */
+}
+
+.button-like-add-photo {
+  display: inline-flex; /* To align icon and text nicely */
+  align-items: center;
+  justify-content: center;
+  gap: 8px; /* Space between icon and text */
+  padding: 12px 24px; /* Generous padding for a good button feel */
+  background-color: #007bff; /* Primary button color (e.g., blue) */
+  color: white;
+  border: none;
+  border-radius: 6px; /* Slightly rounded corners */
+  cursor: pointer;
+  font-size: 1em; /* Adjust as needed */
+  font-weight: 500;
+  text-align: center;
+  transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, transform 0.1s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  min-width: 150px; /* Ensure a minimum width */
+}
+
+.button-like-add-photo:hover {
+  background-color: #0056b3; /* Darker shade on hover */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.button-like-add-photo:active {
+  transform: translateY(1px); /* Slight press effect */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Disabled state for the button-like label */
+.button-like-add-photo.disabled {
+  background-color: #a0c7e6; /* Lighter, desaturated version of primary color */
+  color: #f0f0f0; /* Lighter text color for disabled state */
+  cursor: not-allowed;
+  box-shadow: none; /* Remove shadow when disabled */
+}
+
+.button-like-add-photo.disabled:hover {
+  background-color: #a0c7e6; /* Keep the same background on hover when disabled */
+}
+
+/* Spinner icon styles */
+.button-like-add-photo .spinner {
+  animation: spin 1s linear infinite;
+  font-size: 1.2em; /* Make spinner slightly larger than text if desired */
+  /* margin-right: 8px; /* Already handled by gap in flex container */
+}
+
+/* Keyframes for the spinner animation */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Ensure the FaPlus icon is vertically aligned if its default alignment is off */
+.button-like-add-photo svg {
+  vertical-align: middle;
+}
+
+
+
 

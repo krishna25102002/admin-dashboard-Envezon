@@ -85,10 +85,10 @@ function BusinessManagement({ isSidebarOpen }) {
           <h1>Business Management</h1>
         </div>
         <div className="header-right">
-          <div className="search-bar">
+          {/* <div className="search-bar">
             <input type="text" placeholder="Search" />
             <span className="search-icon">🔍</span>
-          </div>
+          </div> */}
           <div className="total-vendors">
             <span>Total Approved Vendors: {isLoadingList ? '...' : approvedVendorCount}</span>
           </div>
