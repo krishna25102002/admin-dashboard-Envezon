@@ -4,7 +4,7 @@ import axios from 'axios';
 // Define your API base URL
 // Using an environment variable is best practice for different environments (dev, staging, prod)
 // Example: const API_BASE_URL = process.env.REACT_APP_API_URL || "https://codizone.in";
-const API_BASE_URL = "https://codizone.in";
+const API_BASE_URL = "https://app.evnzon.in";
 
 // Function to get authentication token
 // Adjust this if you store your token differently (e.g., sessionStorage, context, Redux)

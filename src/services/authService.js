@@ -2,7 +2,7 @@
 
 import { storeAuthToken, clearAuthToken } from './apiService';
 
-const API_BASE_URL = 'https://codizone.in'; // Ensure this is your correct API base URL
+const API_BASE_URL = 'https://app.evnzon.in'; // Ensure this is your correct API base URL
 
 /**
  * Attempts to log in the admin user by sending credentials to the backend.
